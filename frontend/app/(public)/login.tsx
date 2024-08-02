@@ -2,9 +2,9 @@ import SignInWithOAuth from '@/components/SignInWithOAuth';
 import { useSignIn } from '@clerk/clerk-expo';
 import { Link } from 'expo-router';
 import React, { useState } from 'react';
-import { View, StyleSheet, TextInput, Button, Pressable, Text, Alert } from 'react-native';
+import { View, StyleSheet, TextInput, Button, Pressable, Text, Alert,Image } from 'react-native';
 import Spinner from 'react-native-loading-spinner-overlay';
-
+import colors from '@/constants/Colors';
 const Login = () => {
   const { signIn, setActive, isLoaded } = useSignIn();
 
@@ -35,29 +35,40 @@ const Login = () => {
   return (
     <View style={styles.container}>
       <Spinner visible={loading} />
-
+      <View style={{alignItems:'center'}}>
+      <Image source={require('../../assets/images/login/1.png')} style={{width: 281, height: 285}} />
+      </View>
       <View>
-        <Text>Email</Text>
+        <Text style={styles.titleInput}>Email</Text>
         <TextInput autoCapitalize="none" placeholder="Enter your email" value={emailAddress} onChangeText={setEmailAddress} style={styles.inputField} />
       </View>
       <View>
-        <Text>Password</Text>
+        <Text style={styles.titleInput}>Password</Text>
         <TextInput placeholder="Enter your password" value={password} onChangeText={setPassword} secureTextEntry style={styles.inputField} />
       </View>
+      <View style={styles.button}>
+        <Button onPress={onSignInPress} title="Login" color={'#FFFFFF'}/>
+      </View>
 
-      <Button onPress={onSignInPress} title="Login" color={'#6c47ff'}></Button>
+      <SignInWithOAuth/>
 
+      <View style={{marginVertical: 20, alignItems:'center'}}>
       <Link href="/reset" asChild>
-        <Pressable style={styles.button}>
+        <Pressable>
           <Text>Forgot password?</Text>
         </Pressable>
       </Link>
+      </View>
+
+      <View style={{flexDirection:'row',justifyContent: 'center'}}>
+      <Text>Doesn't have account?    </Text>
       <Link href="/register" asChild>
-        <Pressable style={styles.button}>
-          <Text>Create Account</Text>
+        <Pressable>
+          <Text style={{color: '#3DB2FF'}}>Create Account</Text>
         </Pressable>
       </Link>
-      <SignInWithOAuth/>
+      </View>
+
     </View>
   );
 };
@@ -68,18 +79,25 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     padding: 20,
   },
+  titleInput:{
+    color:'#0074CE',
+    fontSize:16,
+  },
   inputField: {
     marginVertical: 4,
-    height: 50,
+    height: 58,
     borderWidth: 1,
-    borderColor: '#6c47ff',
-    borderRadius: 4,
-    padding: 10,
+    borderColor: '#0074CE',
+    borderRadius: 40,
+    padding: 16,
     backgroundColor: '#fff',
   },
   button: {
     margin: 8,
     alignItems: 'center',
+    backgroundColor: colors.primary.primary80,
+    padding: 16,
+    borderRadius: 40,
   },
 });
 

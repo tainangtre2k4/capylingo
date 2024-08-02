@@ -46,7 +46,9 @@ const InitialLayout = () =>{
       router.replace('/login');
     }
   }, [isSignedIn]);
-  return <Slot/>
+  return(
+  <Slot/>
+  ) 
 }
 export default function RootLayout() {
   const error = console.error; console.error = (...args) => { if (/defaultProps/.test(args[0])) return; error(...args); };

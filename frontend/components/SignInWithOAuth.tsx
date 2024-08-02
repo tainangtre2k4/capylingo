@@ -5,7 +5,8 @@ import { Link } from "expo-router";
 import { useOAuth } from "@clerk/clerk-expo";
 import * as Linking from "expo-linking";
 import { SocialIcon } from 'react-native-elements';
-
+import AntDesign from '@expo/vector-icons/AntDesign';
+import FontAwesome from '@expo/vector-icons/FontAwesome';
 export const useWarmUpBrowser = () => {
   React.useEffect(() => {
     // Warm up the android browser to improve UX
@@ -57,19 +58,17 @@ const SignInWithOAuth = () => {
 
   return (
     <View>
-      <TouchableOpacity onPress={onPressGoogle}>
-        <SocialIcon
-          title='Sign In With Google'
-          button
-          type='google'
-        />
+      <TouchableOpacity onPress={onPressGoogle} style={{flexDirection:'row',alignItems:'center', justifyContent:'center',marginVertical:16,}}>
+        <View style={{marginHorizontal:10}}>
+           <Text>Login with Google</Text> 
+        </View>
+        <AntDesign name="google" size={20} color="black" />
       </TouchableOpacity>
-      <TouchableOpacity onPress={onPressFacebook}>
-        <SocialIcon
-          title='Sign In With Facebook'
-          button
-          type='facebook'
-        />
+      <TouchableOpacity onPress={onPressGoogle} style={{flexDirection:'row',alignItems:'center', justifyContent:'center'}}>
+        <View style={{marginHorizontal:10}}>
+           <Text>Login with Facebook</Text> 
+        </View>
+        <FontAwesome name="facebook" size={20} color="black" />
       </TouchableOpacity>
     </View>
   );
@@ -78,5 +77,7 @@ const SignInWithOAuth = () => {
 export default SignInWithOAuth;
 
 const styles = StyleSheet.create({
-
+    title:{
+      color:'#111111'
+    }
 });
