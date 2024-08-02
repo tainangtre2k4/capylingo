@@ -1,8 +1,9 @@
 import { Slot } from 'expo-router';
-import { ClerkProvider, ClerkLoaded,useAuth } from "@clerk/clerk-expo"
+import { ClerkProvider,useAuth } from "@clerk/clerk-expo"
 import * as SecureStore from 'expo-secure-store';
 import { useSegments,useRouter } from 'expo-router';
 import { useEffect } from 'react';
+import { View } from 'react-native';
 const publishableKey=process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY
 const tokenCache = {
   async getToken(key) {
@@ -47,7 +48,9 @@ const InitialLayout = () =>{
     }
   }, [isSignedIn]);
   return(
+
   <Slot/>
+
   ) 
 }
 export default function RootLayout() {

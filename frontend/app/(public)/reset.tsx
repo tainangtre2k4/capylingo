@@ -1,7 +1,9 @@
-import { View, StyleSheet, TextInput, Button } from 'react-native';
+import { View, StyleSheet, TextInput, Button,Text } from 'react-native';
 import React, { useState } from 'react';
 import { Stack } from 'expo-router';
 import { useSignIn } from '@clerk/clerk-expo';
+import colors from '@/constants/Colors';
+import { color } from 'react-native-elements/dist/helpers';
 
 const PwReset = () => {
   const [emailAddress, setEmailAddress] = useState('');
@@ -47,9 +49,13 @@ const PwReset = () => {
 
       {!successfulCreation && (
         <>
-          <TextInput autoCapitalize="none" placeholder="simon@galaxies.dev" value={emailAddress} onChangeText={setEmailAddress} style={styles.inputField} />
-
-          <Button onPress={onRequestReset} title="Send Reset Email" color={'#6c47ff'}></Button>
+          <View style={{marginVertical: 16}}>
+            <Text style={{fontSize:20, textAlign:'center'}}>Enter Your Email Ro Reset Password</Text>
+          </View>
+          <TextInput autoCapitalize="none" placeholder="yourEmail@gmail.com" value={emailAddress} onChangeText={setEmailAddress} style={styles.inputField} />
+          <View style={styles.button}>
+          <Button onPress={onRequestReset} title="Send Reset Email" color={colors.base.black0}></Button>
+          </View>
         </>
       )}
 
@@ -59,7 +65,7 @@ const PwReset = () => {
             <TextInput value={code} placeholder="Code..." style={styles.inputField} onChangeText={setCode} />
             <TextInput placeholder="New password" value={password} onChangeText={setPassword} secureTextEntry style={styles.inputField} />
           </View>
-          <Button onPress={onReset} title="Set new Password" color={'#6c47ff'}></Button>
+          <Button onPress={onReset} title="Set new Password" color={colors.base.black0}></Button>
         </>
       )}
     </View>
@@ -74,16 +80,19 @@ const styles = StyleSheet.create({
   },
   inputField: {
     marginVertical: 4,
-    height: 50,
+    height: 58,
     borderWidth: 1,
-    borderColor: '#6c47ff',
-    borderRadius: 4,
-    padding: 10,
+    borderColor: colors.primary.primary100,
+    borderRadius: 40,
+    padding: 16,
     backgroundColor: '#fff',
   },
   button: {
-    margin: 8,
     alignItems: 'center',
+    backgroundColor:colors.primary.primary80,
+    padding:16,
+    borderRadius: 40,
+    marginVertical: 16,
   },
 });
 
