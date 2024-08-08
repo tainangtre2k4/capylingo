@@ -14,32 +14,32 @@ const DATA = [
   {
     key: "1",
     title: "Daily English News",
-    description: "I'll back up the multi-byte XSS matrix, that should feed the SCSI application!",
+    description: "Catch up on the latest news and enhance your English skills with our daily reading feature. Improve your vocabulary and comprehension with every article.",
     image: capyNews
   },
   {
     key: "2",
     title: "Play Games",
-    description: "Use the optical SAS system, then you can navigate the auxiliary alarm!",
+    description: "Play exciting games that make learning English fun. Improve your language skills through entertaining and interactive challenges.",
     image: capyGames
   },
   {
     key: "3",
     title: "Community",
-    description: "The ADP array is down, compress the online sensor so we can input the HTTP panel!",
+    description: "Play exciting games that make learning English fun. Improve your language skills through entertaining and interactive challenges.",
     image: capyCommunity
   },
   {
     key: "4",
     title: "AI Chatbot",
-    description: "We need to program the open-source IB interface!",
+    description: "Chat with our quirky digital buddy, Cabybot! He will be a great company for your journey. Our beloved Cabybot sometimes turns into Dumdumbara though...",
     image: capyAI
   }
 ];
 
 const Indicator = ({scrollX}) => {
     return(
-        <View style={{flexDirection: 'row', position: 'absolute', bottom: 100}}>
+        <View style={{flexDirection: 'row', position: 'absolute', bottom: 150}}>
             {DATA.map((_, i) => {
                 const inputRange = [(i-1)*width, i*width, (i+1)*width]
                 const scale = scrollX.interpolate({  // interpolate để chuyển đổi một thuộc tính trong style dần dần (mượt mà: màu, opacity, width, height, rotation,..)
@@ -106,8 +106,8 @@ const Square = ({scrollX}) => {
         backgroundColor: '#fff',
         borderRadius: 86,
         position: 'absolute',
-        top: -height * 0.633,
-        left: -height *0.3,
+        top: -height * 0.68,
+        left: -height *0.32,
         transform: [
           {
             rotate,
@@ -144,7 +144,7 @@ export default function App() {
         renderItem={({ item }) => {
           return (
           <View style={{width: width, alignItems: 'center'}}>
-            <View style={{flex: 0.7, justifyContent: 'center', padding: 20 }}>
+            <View style={{flex: 0.6, justifyContent: 'center', padding: 20 }}>
                 <Image source={item.image}
                 style={{
                     width: width / 2,
@@ -154,12 +154,12 @@ export default function App() {
                 />
             </View>
             
-            <View style={{flex: 0.3, alignItems: 'center'}}>
-              <Text style={{ color: '#fff', fontWeight: '800', fontSize: 28, marginBottom: 10}}>
+            <View style={{flex: 0.2, alignItems: 'center'}}>
+              <Text style={{ color: '#fff', fontWeight: '800', fontSize: 30, marginBottom: 40, marginTop: 16}}>
                   {item. title}
               </Text>
 
-              <Text style={{ color: '#fff', fontWeight: '300'}}>
+              <Text style={{ color: '#fff', fontWeight: '500', fontSize: 16, marginHorizontal: 30}}>
                   {item.description}</Text>
             </View>
           </View>
@@ -167,6 +167,19 @@ export default function App() {
         }}
         />
       <Indicator scrollX={scrollX}/>
+      <TouchableOpacity
+        style={{
+          height: 60,
+          width: 273,
+          position:'absolute',
+          bottom: 70,
+          backgroundColor: '#fff',
+          alignItems: 'center',
+          justifyContent: 'center',
+          borderRadius: '30',
+        }}>
+            <Text style={{fontWeight: '600', fontSize: '18', color: '#707070'}}>Yes, Captain Capybara !</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -175,7 +188,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+     alignItems: 'center',
+    // justifyContent: 'center',
   },
 });
