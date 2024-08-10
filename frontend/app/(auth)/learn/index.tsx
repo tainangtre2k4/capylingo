@@ -1,10 +1,12 @@
-import { View, Text, StyleSheet, TextInput, Image } from 'react-native';
-import React from 'react';
+import {View, Text, StyleSheet, TextInput, Image, Dimensions, StatusBar as RNStatusBar} from 'react-native';
+import {useEffect} from 'react';
 import { useUser } from '@clerk/clerk-expo';
 import { Ionicons } from '@expo/vector-icons'
 import WOTDCard from '@/components/learn/WOTDCard';
 import SubjectCard from '@/components/learn/SubjectCard';
 import { StatusBar } from 'expo-status-bar';
+
+const {width, height} = Dimensions.get('window')
 
 const Learn = () => {
   const { user } = useUser();
@@ -14,20 +16,18 @@ const Learn = () => {
       <StatusBar style='light' backgroundColor='#3DB2FF' />
       <View style={styles.container}>
         <View style={styles.headBanner}>
-          <View style={styles.dictionaryContainer}>
             <View style={styles.GreetingContainer}>
               <Text style={styles.greeting}>Welcome, {user?.fullName} !</Text>
               <Text style={styles.dictionaryLabel}>Capybara Dictionary</Text>
               <View style={styles.searchBox}>
                 <TextInput style={styles.searchInput} placeholder='Quick Search' />
-                <Ionicons name='search-outline' size={18} />
+                <Ionicons name='search-outline' size={20} color='#3DB2FF' />
               </View>
             </View>
             <Image
               source={require('../../../assets/images/learn/learn-greeter.png')}
               style={styles.image}
             />
-          </View>
         </View>
         <View style={styles.bodyContainer}>
           <View style={styles.indicator} />
@@ -56,59 +56,61 @@ const styles = StyleSheet.create({
   },
   headBanner: {
     backgroundColor: "#3DB2FF",
-    paddingTop: 30,
-    justifyContent: 'center',
+    paddingTop: RNStatusBar.currentHeight || height * .042,
+    justifyContent: 'space-between',
+    paddingHorizontal: width * .047,
+    flexDirection: 'row',
   },
   GreetingContainer: {
-    paddingTop: 20,
-    paddingBottom: 30,
-    paddingHorizontal: 20,
+    paddingTop: height * .025,
+    paddingBottom: height * .042
+
   },
   greeting: {
     fontSize: 18,
     fontWeight: '500',
     color: 'white',
-    marginBottom: 20
-  },
-  dictionaryContainer: {
-    flexDirection: 'row',
+    marginBottom: height * .02,
+    marginHorizontal: width * .011
   },
   dictionaryLabel: {
     fontSize: 20,
     fontWeight: '700',
     color: 'white',
-    marginBottom: 14
+    marginBottom: height * .02,
+    marginHorizontal: width * .011
   },
   searchBox: {
     flexDirection: 'row',
     backgroundColor: 'white',
-    borderRadius: 18,
+    borderRadius: width * .04,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingVertical: 4,
-    paddingHorizontal: 12,
+    paddingVertical: height * .004,
+    paddingHorizontal: width * .03,
     elevation: 4
   },
   searchInput: {
-    width: 160,
+    width: width * .42,
     fontSize: 14,
     fontStyle: 'italic'
   },
   image: {
-    marginTop: 20,
-    width: 130,
-    height: 130
+    marginTop: height * .034,
+    height: height * .17,
+    width: width * .33,
+    resizeMode: 'contain'
   },
   bodyContainer: {
     flex: 1,
-    borderTopRightRadius: 16,
-    borderTopLeftRadius: 16,
+    borderTopRightRadius: width * .04,
+    borderTopLeftRadius: width * .04,
     backgroundColor: 'white',
-    paddingHorizontal: 20,
-    paddingVertical: 20,
+    paddingHorizontal: width * .042,
+    paddingVertical: width * .042,
   },
   indicator: {
-    width: 100,
+    width: width * .2,
     borderWidth: 2,
     borderColor: '#A2A7A9',
     alignSelf: 'center'
@@ -116,7 +118,7 @@ const styles = StyleSheet.create({
   bodyTitle: {
     fontSize: 22,
     fontWeight: '600',
-    marginVertical: 16,
+    marginVertical: height * .02,
     alignSelf: 'center'
   },
   trackingCardsContainer: {
@@ -125,7 +127,7 @@ const styles = StyleSheet.create({
   },
   SubjectCardsContainer: {
     flex: 1,
-    marginVertical: 30,
+    marginVertical: 30, // not finish yet
     justifyContent: 'space-between',
   }
 })

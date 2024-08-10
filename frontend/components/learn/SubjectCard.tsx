@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, Image, StyleSheet, ImageSourcePropType, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
-import VocabularyLesson from '@/app/(auth)/learn/VocabularyLesson';
+import Vocabulary from "@/app/(auth)/learn/vocabulary";
 
 // Define the allowed types
 type SubjectType = 'vocabulary' | 'grammar' | 'skillcheck';
@@ -24,19 +24,19 @@ interface SubjectCardProps {
 }
 
 const SubjectCard: React.FC<SubjectCardProps> = ({ type }) => {
-  const capitalizedType = type.charAt(0).toUpperCase() + type.slice(1);
+  const label = (type === 'vocabulary') ? 'Vocabulary' : (type === 'grammar') ? 'Grammar' : 'Skill Check';
   const router = useRouter();
 
   const pressHandler = () => {
     switch (type) {
       case 'vocabulary':
-        router.push('/(auth)/learn/VocabularyLesson');
+        router.push('/(auth)/learn/vocabulary');
         break;
       case 'grammar':
-        router.push('/(auth)/learn/GrammarLesson');
+        router.push('/(auth)/learn/grammar');
         break;
       case 'skillcheck':
-        router.push('/(auth)/learn/SkillcheckLesson');
+        router.push('/(auth)/learn/skillcheck');
     }
   }
 
@@ -45,7 +45,7 @@ const SubjectCard: React.FC<SubjectCardProps> = ({ type }) => {
       <View style={styles.container}>
         <Image source={illustrationMap[type]} style={styles.subjectIllustration} />
         <View style={styles.progressContainer}>
-          <Text style={styles.label}>{capitalizedType}</Text>
+          <Text style={styles.label}>{label}</Text>
         </View>
       </View>
     </TouchableOpacity>

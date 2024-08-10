@@ -5,17 +5,12 @@ import BackButton from "@/components/BackButton";
 const HeaderProgressTracker = ({ current, all }: { current: number, all: number }) => {
   return (
     <View style={styles.container}>
-      <View style={styles.backButtonContainer}>
-        <BackButton />
-      </View>
-      <View style={styles.pillsContainer}>
         {[...Array(all)].map((_, index) => (
           <View
             key={index}
             style={index < current ? styles.pillActive : styles.pillInactive}
           />
         ))}
-      </View>
     </View>
   )
 }
@@ -32,28 +27,18 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     flexDirection: 'row',
   },
-  backButtonContainer: {
-    position: 'absolute',
-    top: (RNStatusBar.currentHeight || 20) + 14,
-    left: 20,
-    zIndex: 1,
-  },
-  pillsContainer: {
-    flexDirection: 'row',
-    alignSelf: 'center',
-  },
   pillActive: {
-    width: 34,
+    width: 30,
     height: 8,
     backgroundColor: '#3DB2FF',
     borderRadius: 6,
     marginHorizontal: 2
   },
   pillInactive: {
-    width: 34,
+    width: 30,
     height: 8,
     backgroundColor: '#E5E5E5',
     marginHorizontal: 2,
-    borderRadius: 2,
+    borderRadius: 6,
   },
 })
