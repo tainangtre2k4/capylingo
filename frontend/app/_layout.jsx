@@ -4,6 +4,7 @@ import * as SecureStore from 'expo-secure-store';
 import { useSegments,useRouter } from 'expo-router';
 import { useEffect } from 'react';
 import { View } from 'react-native';
+import QueryProvider from '../src/providers/QueryProvider.tsx'
 const publishableKey=process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY
 const tokenCache = {
   async getToken(key) {
@@ -57,7 +58,9 @@ export default function RootLayout() {
   const error = console.error; console.error = (...args) => { if (/defaultProps/.test(args[0])) return; error(...args); };
   return (
     <ClerkProvider publishableKey={publishableKey} tokenCache={tokenCache}>
+      <QueryProvider>
       <InitialLayout/>
+      </QueryProvider>
     </ClerkProvider>
   );
 }
