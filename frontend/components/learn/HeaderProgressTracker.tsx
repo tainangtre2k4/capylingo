@@ -19,9 +19,6 @@ export default HeaderProgressTracker
 
 const styles = StyleSheet.create({
   container: {
-    paddingTop: RNStatusBar.currentHeight,
-    paddingHorizontal: 20,
-    height: (RNStatusBar.currentHeight || 20) + 70,
     backgroundColor: 'white',
     alignItems: 'center',
     justifyContent: 'center',

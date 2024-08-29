@@ -11,12 +11,11 @@ const Type1 = () => {
   useEffect(() => {
     navigation.setOptions({
       headerShown: true, header: () => (
-        <>
-          <View style={styles.backButtonContainer}>
-            <BackButton/>
-          </View>
+        <View style={styles.headerContainer}>
+          <BackButton/>
           <HeaderProgressTracker current={1} all={4}/>
-        </>
+          <View style={styles.headerFillerContainer} />
+        </View>
       )
     })
   }, [navigation]);
@@ -35,16 +34,24 @@ const Type1 = () => {
 export default Type1
 
 const styles = StyleSheet.create({
+  headerContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: (RNStatusBar.currentHeight || 20),
+    paddingVertical: 12,
+    backgroundColor: 'white',
+    paddingHorizontal: 20,
+  },
   container: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'white',
   },
-  backButtonContainer: {
-    position: 'absolute',
-    top: (RNStatusBar.currentHeight || 20) + 14,
-    left: 20,
-    zIndex: 1,
+  headerFillerContainer: {
+    height: 42,
+    width: 42,
+    backgroundColor: 'white',
   },
 })
