@@ -1,6 +1,6 @@
 import React from 'react';
 import { Text, StyleSheet, View, Dimensions } from 'react-native';
-import { sharedStyles } from '../styles/sharedStyles';
+import { sharedStyles, correctColor, incorrectColor } from '../styles/sharedStyles';
 import { Styles } from './styles'
 
 const { width, height } = Dimensions.get('window');
@@ -19,8 +19,7 @@ const ResultContent: React.FC<ResultContentProps> = ({ result, answers }) => {
         <Text
           style={[
             sharedStyles.resultTitle,
-            result === 'correct' ? sharedStyles.correctColor : sharedStyles.incorrectColor,
-            {marginLeft: 0.042*width}
+            {color: result === 'correct' ? correctColor : incorrectColor, marginLeft: 0.042*width}
           ]}
         >
           {result === 'correct' ? 'That’s right!' : 'Oops.. That’s not quite right'}
@@ -29,8 +28,7 @@ const ResultContent: React.FC<ResultContentProps> = ({ result, answers }) => {
         <Text
           style={[
             sharedStyles.answerText,
-            result === 'correct' ? sharedStyles.correctColor : sharedStyles.incorrectColor,
-            {marginLeft: 0.042*width}
+            {color: result === 'correct' ? correctColor : incorrectColor, marginLeft: 0.042*width}
           ]}
         >
           Answer:
@@ -39,7 +37,7 @@ const ResultContent: React.FC<ResultContentProps> = ({ result, answers }) => {
         <View style={Styles.sentenceContainer}>
           {answers.map((word, index) => (
             <View key={index} style={Styles.selectedWordButton}>
-              <Text style={[Styles.selectedWordText, result === 'correct' ? sharedStyles.correctColor : sharedStyles.incorrectColor,]}>{word}</Text>
+              <Text style={[Styles.selectedWordText, {color: result === 'correct' ? correctColor : incorrectColor}]}>{word}</Text>
             </View>
           ))}
         </View>

@@ -13,26 +13,28 @@ const ResultContent: React.FC<ResultContentProps> = ({ result, answer }) => {
   if (!result) return null;
 
   return (
-        <View style={sharedStyles.answerBox}>
+        <View style={[sharedStyles.answerBox, {alignItems: 'center'}]}>
             <Text style={[
                 sharedStyles.resultTitle,
                 {color: result === 'correct' ? correctColor : incorrectColor, marginLeft: 0.042*width}
             ]}>
-                {result === 'correct' ? 'That’s right!' : 'Ups.. That’s not quite right'}
+                {result === 'correct' ? 'Amazing!' : 'Ups.. that’s wrong'}
             </Text>
         
-            <Text style={[sharedStyles.answerText, 
-                        {color: result === 'correct' ? correctColor : incorrectColor, marginLeft: 0.042*width}]}>
+            <View style={{ flexDirection: 'row', marginLeft: 0.042 * width }}>
+                <Text style={[
+                    sharedStyles.answerText,
+                    { color: result === 'correct' ? correctColor : incorrectColor }
+                ]}>
                     Answer:
-            </Text>
-            <Text style={[
-                sharedStyles.answerText,
-                {textAlign: 'center',
-                 fontWeight: '500',
-                 color: result === 'correct' ? correctColor : incorrectColor}
-            ]}>
+                </Text>
+                <Text style={[
+                    sharedStyles.answerText,
+                    { color: result === 'correct' ? correctColor : incorrectColor, marginLeft: 5, fontWeight: '500' }
+                ]}>
                     {answer}
-            </Text>
+                </Text>
+            </View>
         </View>
 
   );

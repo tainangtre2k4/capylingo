@@ -57,7 +57,12 @@ const type2 = () => {
             
             <View style={Styles.sentenceContainer}>
                 {selectedWords.map((word, index) => (
-                <TouchableOpacity key={index} onPress={() => handleRemoveWord(index)} style={Styles.selectedWordButton}>
+                <TouchableOpacity
+                  key={index}
+                  onPress={() => handleRemoveWord(index)}
+                  style={Styles.selectedWordButton}
+                  disabled={!!result}
+                >
                     <Text style={Styles.selectedWordText}>{word}</Text>
                 </TouchableOpacity>
                 ))}
@@ -69,6 +74,7 @@ const type2 = () => {
                     key={index}
                     style={styles.wordButton}
                     onPress={() => handleWordPress(word)}
+                    disabled={!!result}
                 >
                     <Text style={styles.wordButtonText}>{word}</Text>
                 </TouchableOpacity>

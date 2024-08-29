@@ -33,6 +33,7 @@ const type1 = () => {
           value={userAnswer}
           multiline={true}
           textAlignVertical="top"
+          editable={!result}
         />
 
         <ResultBox result={result} content={<ResultContent result={result} answer={correctAnswer} />} />
