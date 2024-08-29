@@ -5,6 +5,7 @@ import React, { useState } from 'react';
 import { View, StyleSheet, TextInput, Button, Pressable, Text, Alert,Image } from 'react-native';
 import Spinner from 'react-native-loading-spinner-overlay';
 import colors from '@/constants/Colors';
+import { color } from 'react-native-elements/dist/helpers';
 const Login = () => {
   const { signIn, setActive, isLoaded } = useSignIn();
 

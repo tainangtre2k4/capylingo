@@ -1,9 +1,9 @@
-import { Button, TextInput, View, StyleSheet } from 'react-native';
+import { Button, TextInput, View, StyleSheet,Text } from 'react-native';
 import { useSignUp } from '@clerk/clerk-expo';
 import Spinner from 'react-native-loading-spinner-overlay';
 import { useState } from 'react';
 import { Stack } from 'expo-router';
-
+import colors from '@/constants/Colors';
 const Register = () => {
   const { isLoaded, signUp, setActive } = useSignUp();
 
@@ -66,19 +66,33 @@ const Register = () => {
 
       {!pendingVerification && (
         <>
-          <TextInput autoCapitalize="none" placeholder="simon@galaxies.dev" value={emailAddress} onChangeText={setEmailAddress} style={styles.inputField} />
-          <TextInput placeholder="password" value={password} onChangeText={setPassword} secureTextEntry style={styles.inputField} />
+          <View>
+            <Text style={styles.title}>Enter Your Email</Text>
+            <TextInput autoCapitalize="none" placeholder="yourgmail@gmail.com" value={emailAddress} onChangeText={setEmailAddress} style={styles.inputField} />
+          </View>
+          <View>
+            <Text style={styles.title}>Enter Your Password</Text>
+            <TextInput placeholder="password" value={password} onChangeText={setPassword} secureTextEntry style={styles.inputField} />
+          </View>
 
-          <Button onPress={onSignUpPress} title="Sign up" color={'#6c47ff'}></Button>
+          <View style={styles.button}>         
+             <Button onPress={onSignUpPress} title="Sign up" color={colors.base.black0}></Button>
+          </View>
         </>
       )}
 
       {pendingVerification && (
         <>
+          <View style={styles.header}>
+            <Text style={{fontSize:20,fontWeight:'bold'}}>You have successfully registered!</Text>
+            <Text style={{textAlign:'center'}}>We have sent a confirmation email to you. Please check your email and enter the code below</Text>
+          </View>
           <View>
             <TextInput value={code} placeholder="Code..." style={styles.inputField} onChangeText={setCode} />
           </View>
-          <Button onPress={onPressVerify} title="Verify Email" color={'#6c47ff'}></Button>
+          <View style={styles.button}>
+          <Button onPress={onPressVerify} title="Verify Email" color={colors.base.black0}></Button>
+          </View>
         </>
       )}
     </View>
@@ -92,17 +106,29 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   inputField: {
-    marginVertical: 4,
-    height: 50,
+    marginVertical: 6,
+    height: 58,
     borderWidth: 1,
-    borderColor: '#6c47ff',
-    borderRadius: 4,
-    padding: 10,
-    backgroundColor: '#fff',
+    borderColor: colors.primary.primary100,
+    borderRadius: 40,
+    padding: 16,
+    backgroundColor: colors.base.black0,
   },
   button: {
-    margin: 8,
+    marginVertical: 10,
+    height: 58,
+    borderRadius: 40,
+    justifyContent:'center',
     alignItems: 'center',
+    backgroundColor:colors.primary.primary80
+  },
+  title:{
+    color:colors.primary.primary100,
+    fontSize: 16,
+  },
+  header:{
+    alignItems:'center',
+    marginVertical: 16,
   },
 });
 
