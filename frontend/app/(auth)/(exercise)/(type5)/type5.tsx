@@ -5,6 +5,7 @@ import QuestionText from '../components/questionText';
 import ResultBox from '../components/resultBox';
 import { correctColor, incorrectColor, sharedStyles } from '../styles/sharedStyles';
 import ResultContent from './resultContent';
+import AnswerModal from './answerModal';
 
 // Hàm đảo thứ tự ngẫu nhiên mảng
 const shuffleArray = (array: any[]) => {
@@ -52,6 +53,7 @@ const type5 = () => {
   const [matchedPairs, setMatchedPairs] = useState<number[][]>([]);
   const [results, setResults] = useState<boolean[]>([]);
   const [result, setResult] = useState<'correct' | 'incorrect' | null>(null);
+  const [isModalVisible, setModalVisible] = useState(false);
 
   const colors = useMemo(() => generateColors(synonyms.length), [synonyms.length]);
   //const colors = ['#3DB2FF', '#FFAFBD', '#85D4B5', '#4275DB', '#7AD47A', '#ff9800', '#4caf50', '#F08792'];
@@ -104,14 +106,6 @@ const type5 = () => {
          setResult('incorrect');
       }
   };
-
-  const handleButtonPress = () => {
-    if (buttonTitle === "Check Answer") {
-      checkAnswer();
-    } else {
-      handleMatch();
-    }
-  };
   
   const renderItem = (isRight: 0 | 1) => ({ item, index }: { item: { word: string, index: number }, index: number }) => {
     const isMatched = matchedPairs.some(pair => pair[isRight] === index);
@@ -149,38 +143,25 @@ const type5 = () => {
           { backgroundColor }
         ]}
         onPress={handlePress}
-        disabled={buttonTitle === "Next Question"}
+        disabled={!!results.length}
       >
-        <Text style={[sharedStyles.textCheckAnswerButton, {color: isMatched ? '#444444' : '#fff'}]}>{item.word}</Text>
+        <Text style={[sharedStyles.textCheckAnswerButton, {color: results.length ? '#fff' : isMatched ? '#444444' : '#fff'}]}>{item.word}</Text>
       </TouchableOpacity>
     );
   };
 
-    // Determine the title and background color of the TouchableOpacity
-  const buttonTitle =  results.length ? "Next Question"
-                       : matchedPairs.length !== synonyms.length ? "Match"
-                       : (selectedLeft === null && selectedRight === null)
-                       ? "Check Answer" : "Match"
-
-  const buttonColor = buttonTitle === "Next Question"
-                      ? (result === 'correct' ? correctColor : incorrectColor)
-                      : buttonTitle === "Check Answer"
-                      ? '#0693F1' // color for "Check Answer"
-                      : (selectedLeft === null || selectedRight === null)
-                      ? '#A2B7CC' // Gray
-                      : '#a0c0ff'; // color for "Match
+  const buttonColor = (selectedLeft === null || selectedRight === null)
+                        ? '#A2B7CC' // Gray
+                        : '#a0c0ff'; // color for "Match
+  
+  const toggleModal = () => {
+    setModalVisible(!isModalVisible);
+  };
 
   return (
     <View style={[sharedStyles.container]}>
         <QuestionText question={question} />
-        <View style={{flexDirection: 'row',
-                      justifyContent: 'space-between',
-                      height: '67%',
-                      borderWidth: 2,
-                      paddingTop: 24,
-                      paddingBottom: 18,
-                      borderRadius: 25,
-                      borderColor: '#CDCDCD'}}>
+        <View style={sharedStyles.TwoFlatListBox}>
             <FlatList
                 data={leftColumn}
                 renderItem={renderItem(0)}
@@ -199,16 +180,27 @@ const type5 = () => {
                 showsVerticalScrollIndicator={false}
             />
         </View>
-        
-        <ResultBox result={result} content={<ResultContent result={result} />} />
 
-        <TouchableOpacity
+        <ResultBox result={result} content={<ResultContent result={result} toggleModal={toggleModal}/>} />
+
+        {(matchedPairs.length === synonyms.length && selectedLeft === null && selectedRight === null)
+        ? <CheckAnswerButton onPress={checkAnswer} result={result} />
+        : <TouchableOpacity
             style={[sharedStyles.checkAnswerButton, { backgroundColor: buttonColor }]}
-            onPress={handleButtonPress}
-            disabled={selectedLeft === null && selectedRight === null && buttonTitle === "Match"}
-        >
-            <Text style={sharedStyles.textCheckAnswerButton}>{buttonTitle}</Text>
-        </TouchableOpacity>
+            onPress={handleMatch}
+            disabled={selectedLeft === null || selectedRight === null}
+          >
+              <Text style={sharedStyles.textCheckAnswerButton}>Match</Text>
+          </TouchableOpacity>
+        }
+
+      <AnswerModal
+        visible={isModalVisible}
+        onClose={toggleModal}
+        leftColumn={leftColumn}
+        rightColumn={rightColumn}
+        colors={colors}
+      />
 
     </View>
   );

@@ -96,6 +96,18 @@ export const sharedStyles = StyleSheet.create({
     marginBottom: height*0.037,
   },
 
+  //Matching pairs
+  TwoFlatListBox:{
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    height: '67%',
+    borderWidth: 2,
+    paddingTop: height*0.03,
+    paddingBottom: height*0.022,
+    borderRadius: width*0.067,
+    borderColor: '#CDCDCD'
+  },
+
   // Result Box
   resultBox: {
     padding: width*0.0267,
