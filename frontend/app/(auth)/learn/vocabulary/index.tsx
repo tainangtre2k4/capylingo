@@ -24,7 +24,7 @@ const VocabularyLesson = () => {
 
   return (
     <View style={styles.container}>
-      <Link href='/learn/vocabulary/type1'>type 1</Link>
+      <Link href='/learn/vocabulary/exercises'>exercises</Link>
     </View>
   )
 }

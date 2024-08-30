@@ -1,13 +1,14 @@
-import {StyleSheet, Text, View, StatusBar as RNStatusBar} from 'react-native'
-import React, {useEffect} from 'react'
+import {Platform, StyleSheet, Text, View, StatusBar as RNStatusBar} from 'react-native'
+import React, {useEffect, useState} from 'react'
 import {useNavigation} from "expo-router";
 import HeaderProgressTracker from "@/components/learn/HeaderProgressTracker";
 import {StatusBar} from "expo-status-bar";
 import BackButton from "@/components/BackButton";
+import ExType5 from '@/components/exercise/type5/type5';
 
 const Type1 = () => {
   const navigation = useNavigation();
-
+  
   useEffect(() => {
     navigation.setOptions({
       headerShown: true, header: () => (
@@ -24,7 +25,7 @@ const Type1 = () => {
     <>
       <StatusBar style='dark' backgroundColor='white'/>
       <View style={styles.container}>
-        <Text>Type 1</Text>
+        <ExType5/>
       </View>
     </>
 
@@ -38,7 +39,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginTop: (RNStatusBar.currentHeight || 20),
+    marginTop: Platform.OS === 'android' ? (RNStatusBar.currentHeight || 20) : 0,
     paddingVertical: 12,
     backgroundColor: 'white',
     paddingHorizontal: 20,

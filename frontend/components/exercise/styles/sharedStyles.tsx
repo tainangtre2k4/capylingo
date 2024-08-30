@@ -13,7 +13,7 @@ export const sharedStyles = StyleSheet.create({
     alignItems: 'center',
   },
   question: {
-    marginTop: width * 0.225,
+    //marginTop: width * 0.01,
     marginHorizontal: width*0.03,
     fontWeight: '500',
     fontSize: width * 0.063,

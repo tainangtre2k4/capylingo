@@ -1,15 +1,15 @@
 import React from 'react'
 import { SafeAreaView } from 'react-native'
 import { Stack } from 'expo-router'
-import HeaderProgressTracker from "@/components/learn/HeaderProgressTracker";
 import {StatusBar} from 'expo-status-bar';
 
-const VocabularyStack = () => {
+const ResourcesStack = () => {
   return (  
     <SafeAreaView style={{flex: 1, backgroundColor: '#fff'}}>
-      <Stack />
+      <StatusBar style='dark' backgroundColor='white'/>
+      <Stack screenOptions={{headerShown: false}}/>
     </SafeAreaView>  
   )
 }
 
-export default VocabularyStack
+export default ResourcesStack
