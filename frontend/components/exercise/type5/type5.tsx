@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Button, FlatList} from 'react-native';
-import CheckAnswerButton from '../components/checkAnswerButton';
-import QuestionText from '../components/questionText';
-import ResultBox from '../components/resultBox';
+import CheckAnswerButton from '../exComponents/checkAnswerButton';
+import QuestionText from '../exComponents/questionText';
+import ResultBox from '../exComponents/resultBox';
 import { correctColor, incorrectColor, sharedStyles } from '../styles/sharedStyles';
 import ResultContent from './resultContent';
 import AnswerModal from './answerModal';

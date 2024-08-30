@@ -1,7 +1,7 @@
 import { Slot } from 'expo-router';
-import { ClerkProvider,useAuth } from "@clerk/clerk-expo"
+import { ClerkProvider, useAuth } from "@clerk/clerk-expo"
 import * as SecureStore from 'expo-secure-store';
-import { useSegments,useRouter } from 'expo-router';
+import { useSegments, useRouter } from 'expo-router';
 import { useEffect } from 'react';
 import { View } from 'react-native';
 import QueryProvider from '../src/providers/QueryProvider.tsx'
@@ -30,7 +30,7 @@ const tokenCache = {
     }
   },
 };
-const InitialLayout = () =>{
+const InitialLayout = () => {
   const { isLoaded, isSignedIn } = useAuth();
   const segments = useSegments();
   const router = useRouter();
@@ -43,16 +43,16 @@ const InitialLayout = () =>{
     console.log('User changed: ', isSignedIn);
 
     if (isSignedIn && !inTabsGroup) {
-      router.replace('/home');
+      router.replace('/learn');
     } else if (!isSignedIn) {
       router.replace('/login');
     }
   }, [isSignedIn]);
-  return(
+  return (
 
-  <Slot/>
+    <Slot />
 
-  ) 
+  )
 }
 export default function RootLayout() {
   const error = console.error; console.error = (...args) => { if (/defaultProps/.test(args[0])) return; error(...args); };

@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { View, TextInput, Text, TouchableWithoutFeedback, Keyboard } from 'react-native';
-import CheckAnswerButton from '../components/checkAnswerButton';
-import QuestionText from '../components/questionText';
-import ResultBox from '../components/resultBox';
+import CheckAnswerButton from '../exComponents/checkAnswerButton';
+import QuestionText from '../exComponents/questionText';
+import ResultBox from '../exComponents/resultBox';
 import { sharedStyles } from '../styles/sharedStyles';
 import ResultContent from './resultContent';
 

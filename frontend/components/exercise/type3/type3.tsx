@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
-import CheckAnswerButton from '../components/checkAnswerButton';
-import QuestionText from '../components/questionText';
-import ResultBox from '../components/resultBox';
+import CheckAnswerButton from '../exComponents/checkAnswerButton';
+import QuestionText from '../exComponents/questionText';
+import ResultBox from '../exComponents/resultBox';
 import { sharedStyles, correctColor, incorrectAnswerColor } from '../styles/sharedStyles';
 import ResultContent from './resultContent';
 
