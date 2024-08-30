@@ -1,6 +1,16 @@
-import {Dimensions, Image, StatusBar as RNStatusBar, StyleSheet, Text, TouchableOpacity, View, ScrollView} from 'react-native'
+import {
+    Dimensions,
+    Image,
+    StatusBar as RNStatusBar,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
+    ScrollView,
+    Pressable
+} from 'react-native'
 import React, {useEffect, useState, useContext } from 'react'
-import {useNavigation} from 'expo-router'
+import {useNavigation, router} from 'expo-router'
 import BackButton from "@/components/BackButton";
 import HeaderProgressTracker from "@/components/learn/HeaderProgressTracker";
 import {RenderHTML} from 'react-native-render-html';
@@ -15,7 +25,7 @@ const ReadingArticle = () => {
   const MAX_FONT_SIZE = 28;
   const DEFAULT_FONT_SIZE = 14;
   const [fontSize, setFontSize] = useState(DEFAULT_FONT_SIZE);
-  const {curIndex, maxIndex, passage, prevPassage, nextPassage} = useContext(ReadingContext);
+  const {curIndex, maxIndex, passage, timeRemaining, prevPassage, nextPassage} = useContext(ReadingContext);
 
   const increaseFontSize = () => {
     if (fontSize < MAX_FONT_SIZE) {
@@ -35,7 +45,9 @@ const ReadingArticle = () => {
               <View style={styles.headerContainer}>
                   <BackButton/>
                   <HeaderProgressTracker current={curIndex + 1} all={maxIndex + 1}/>
-                  <TouchableOpacity style={styles.headerRightIconContainer} activeOpacity={0.6}>
+                  <TouchableOpacity style={styles.headerRightIconContainer}
+                                    onPress={() => {router.replace('/learn/skillcheck/reading/QuestionSheet')}}
+                                    activeOpacity={0.6}>
                       <Image source={require('../../../../../assets/images/skillcheck/article.png')}
                              style={styles.headerRightIcon}/>
                   </TouchableOpacity>
@@ -53,24 +65,24 @@ const ReadingArticle = () => {
               <RenderHTML defaultTextProps={{selectable: true, style: { fontSize } }} source={passage} contentWidth={width}/>
           </ScrollView>
           <View style={styles.footer}>
-              <TouchableOpacity style={styles.footerIconContainer} onPress={increaseFontSize}>
+              <Pressable style={styles.footerIconContainer} onPress={increaseFontSize} android_ripple={{color:'#F3F3F3'}}>
                   <Image source={require('../../../../../assets/images/skillcheck/text_up.png')}
                          style={styles.footerText}/>
                   <Text style={styles.footerLabel}>Zoom in</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.footerIconContainer} onPress={decreaseFontSize}>
+              </Pressable>
+              <Pressable style={styles.footerIconContainer} onPress={decreaseFontSize}>
                   <Image source={require('../../../../../assets/images/skillcheck/text_down.png')}
                          style={styles.footerText}/>
                   <Text style={styles.footerLabel}>Zoom out</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.footerIconContainer}>
+              </Pressable>
+              <Pressable style={styles.footerIconContainer}>
                   <Ionicons name="arrow-back" size={24} color="black" onPress={prevPassage}/>
                   <Text style={styles.footerLabel}>Previous</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.footerIconContainer}>
+              </Pressable>
+              <Pressable style={styles.footerIconContainer}>
                   <Ionicons name="arrow-forward" size={24} color="black" onPress={nextPassage}/>
                   <Text style={styles.footerLabel}>Next</Text>
-              </TouchableOpacity>
+              </Pressable>
           </View>
       </>
 
