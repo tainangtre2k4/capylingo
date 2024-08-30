@@ -1,34 +1,93 @@
+import React, { useState, useEffect } from 'react';
 import { View, Text, Button, TextInput, StyleSheet } from 'react-native';
-import { useState } from 'react';
-import { useUser } from '@clerk/clerk-expo';
+import { useUser } from '@clerk/clerk-expo'; // Clerk for authentication
+import { supabase } from '../../lib/supabase';
 
 const Profile = () => {
-  const { user } = useUser();
-  const [firstName, setFirstName] = useState(user?.firstName);
-  const [lastName, setLastName] = useState(user?.lastName);
+  const { user } = useUser(); // Get authenticated user from Clerk
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [loading, setLoading] = useState(true);
 
-  const onSaveUser = async () => {
+  useEffect(() => {
+    if (user?.id) {
+      fetchUserData();
+    }
+  }, [user]);
+
+  // Fetch user data from Supabase
+  const fetchUserData = async () => {
     try {
-      // This is not working!
-      const result = await user?.update({
-        firstName: firstName!,
-        lastName: lastName!,
-      });
-      console.log('🚀 ~ file: profile.tsx:16 ~ onSaveUser ~ result:', result);
-    } catch (e) {
-      console.log('🚀 ~ file: profile.tsx:18 ~ onSaveUser ~ e', JSON.stringify(e));
+      const { data, error } = await supabase
+        .from('users')
+        .select('*')
+        .eq('user_id', user?.id)
+        .single();
+
+      if (error) {
+        throw error;
+      }
+
+      if (data) {
+        console.log(data)
+        setFirstName(data.first_name);
+        setLastName(data.last_name);
+      }
+    } catch (error) {
+      console.log('Error fetching user data:', error.message);
+    } finally {
+      setLoading(false);
     }
   };
+
+  // Update user data in Supabase
+  const onSaveUser = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('users')
+        .update({
+          first_name: firstName,
+          last_name: lastName,
+        })
+        .eq('user_id', user?.id);
+
+      if (error) {
+        throw error;
+      }
+
+      console.log('User data updated:', data);
+    } catch (e) {
+      console.log('Error updating user data:', e.message);
+    }
+  };
+
+  if (loading) {
+    return (
+      <View style={styles.container}>
+        <Text>Loading...</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
       <Text style={{ textAlign: 'center' }}>
-        Good morning {user?.firstName} {user?.lastName}!
+        Good morning {firstName} {lastName}!
       </Text>
 
-      <TextInput placeholder="First Name" value={firstName || ''} onChangeText={setFirstName} style={styles.inputField} />
-      <TextInput placeholder="Last Name" value={lastName || ''} onChangeText={setLastName} style={styles.inputField} />
-      <Button onPress={onSaveUser} title="Update account" color={'#6c47ff'}></Button>
+      <TextInput
+        placeholder="First Name"
+        value={firstName}
+        onChangeText={setFirstName}
+        style={styles.inputField}
+      />
+      <TextInput
+        placeholder="Last Name"
+        value={lastName}
+        onChangeText={setLastName}
+        style={styles.inputField}
+      />
+      <Button onPress={onSaveUser} title="Update account" color={'#6c47ff'} />
     </View>
   );
 };

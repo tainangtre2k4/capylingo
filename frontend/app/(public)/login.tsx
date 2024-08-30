@@ -2,7 +2,7 @@ import SignInWithOAuth from '@/components/SignInWithOAuth';
 import { useSignIn } from '@clerk/clerk-expo';
 import { Link } from 'expo-router';
 import React, { useState } from 'react';
-import { View, StyleSheet, TextInput, Button, Pressable, Text, Alert,Image } from 'react-native';
+import { View, StyleSheet, TextInput, Button, Pressable, Text, Alert,Image, TouchableOpacity } from 'react-native';
 import Spinner from 'react-native-loading-spinner-overlay';
 import colors from '@/constants/Colors';
 import { color } from 'react-native-elements/dist/helpers';
@@ -47,9 +47,12 @@ const Login = () => {
         <Text style={styles.titleInput}>Password</Text>
         <TextInput placeholder="Enter your password" value={password} onChangeText={setPassword} secureTextEntry style={styles.inputField} />
       </View>
-      <View style={styles.button}>
+      {/* <View style={styles.button}>
         <Button onPress={onSignInPress} title="Login" color={'#FFFFFF'}/>
-      </View>
+      </View> */}
+      <TouchableOpacity onPress={onSignInPress} style={styles.button}>
+        <Text style={{color: '#FFF', fontSize: 20, fontWeight: '500'}}> Login </Text>
+      </TouchableOpacity>
 
       <SignInWithOAuth/>
 
@@ -94,10 +97,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   button: {
-    margin: 8,
+    marginVertical: 4,
     alignItems: 'center',
     backgroundColor: colors.primary.primary80,
-    padding: 16,
+    padding: 20,
+    marginTop: 16,
     borderRadius: 40,
   },
 });
