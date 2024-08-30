@@ -13,12 +13,12 @@ export const sharedStyles = StyleSheet.create({
     alignItems: 'center',
   },
   question: {
-    marginTop: width * 0.248,
+    marginTop: width * 0.225,
     marginHorizontal: width*0.03,
     fontWeight: '500',
     fontSize: width * 0.063,
     textAlign: 'center',
-    marginBottom: height * 0.05,
+    marginBottom: height * 0.045,
   },
   smallQuestionText: {
     fontSize: 20,  // Bạn có thể điều chỉnh kích thước phù hợp
@@ -27,7 +27,7 @@ export const sharedStyles = StyleSheet.create({
     fontWeight: '600',
   },
   input: {
-    height: height * 0.23,
+    height: height * 0.37,
     borderColor: '#C5BFBF',
     borderWidth: 1,
     width: width * 0.8,
@@ -94,6 +94,18 @@ export const sharedStyles = StyleSheet.create({
     shadowRadius: 1,
     elevation: 5,
     marginBottom: height*0.037,
+  },
+
+  //Matching pairs
+  TwoFlatListBox:{
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    height: '67%',
+    borderWidth: 2,
+    paddingTop: height*0.03,
+    paddingBottom: height*0.022,
+    borderRadius: width*0.067,
+    borderColor: '#CDCDCD'
   },
 
   // Result Box
