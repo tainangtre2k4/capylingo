@@ -4,35 +4,66 @@ import {useNavigation} from "expo-router";
 import HeaderProgressTracker from "@/components/learn/HeaderProgressTracker";
 import {StatusBar} from "expo-status-bar";
 import BackButton from "@/components/BackButton";
+import ExType1 from '@/components/exercise/type1/type1';
+import ExType2 from '@/components/exercise/type2/type2';
+import ExType3 from '@/components/exercise/type3/type3';
+import ExType4 from '@/components/exercise/type4/type4';
 import ExType5 from '@/components/exercise/type5/type5';
 
-const Type1 = () => {
+const exerciseSequence = [3, 1, 1, 2, 3, 5, 2]; // Mảng bài tập sẽ lấy từ DB
+
+const VocabExercises = () => {
   const navigation = useNavigation();
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  const goToNextExercise = () => {
+    if (currentIndex < exerciseSequence.length - 1) {
+      setCurrentIndex(currentIndex + 1);
+    }
+  };
+  
+  const renderExercise = () => {
+    const currentExercise = exerciseSequence[currentIndex];
+    switch (currentExercise) {
+      case 1:
+        return <ExType1 key={currentIndex} onNext={goToNextExercise} />;
+      case 2:
+        return <ExType2 key={currentIndex} onNext={goToNextExercise} />;
+      case 3:
+        return <ExType3 key={currentIndex} onNext={goToNextExercise} />;
+      case 4:
+        return <ExType4 key={currentIndex} onNext={goToNextExercise} />;
+      case 5:
+        return <ExType5 key={currentIndex} onNext={goToNextExercise} />;
+      default:
+        return null;
+    }
+  };
   
   useEffect(() => {
     navigation.setOptions({
       headerShown: true, header: () => (
         <View style={styles.headerContainer}>
           <BackButton/>
-          <HeaderProgressTracker current={1} all={4}/>
+          <HeaderProgressTracker current={currentIndex+1} all={exerciseSequence.length}/>
           <View style={styles.headerFillerContainer} />
         </View>
       )
     })
-  }, [navigation]);
+  }, [navigation, currentIndex]);
 
   return (
     <>
       <StatusBar style='dark' backgroundColor='white'/>
       <View style={styles.container}>
-        <ExType5/>
+        {renderExercise()}
       </View>
     </>
 
   )
 }
 
-export default Type1
+export default VocabExercises
 
 const styles = StyleSheet.create({
   headerContainer: {

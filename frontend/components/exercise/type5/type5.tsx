@@ -29,7 +29,11 @@ const generateColors = (numColors: number) => {
     return shuffleArray(colors);
   };
 
-const type5 = () => {
+interface Type1Props {
+  onNext: () => void;
+}
+
+const type5: React.FC<Type1Props> = ({ onNext })  => {
   const question = 'Matching synonyms ';
   const synonyms = [
     ['Happy', 'Joyful'],
@@ -140,7 +144,11 @@ const type5 = () => {
       <TouchableOpacity
         style={[
           sharedStyles.MCBoxAnswerSmall,
-          { backgroundColor }
+          { backgroundColor,
+            borderColor: '#A0A0A0',
+            borderWidth: isSelected ? 3 : 0,
+            //borderRadius: 5, 
+          }
         ]}
         onPress={handlePress}
         disabled={!!results.length}
@@ -184,7 +192,7 @@ const type5 = () => {
         <ResultBox result={result} content={<ResultContent result={result} toggleModal={toggleModal}/>} />
 
         {(matchedPairs.length === synonyms.length && selectedLeft === null && selectedRight === null)
-        ? <CheckAnswerButton onPress={checkAnswer} result={result} />
+        ? <CheckAnswerButton onPress={checkAnswer} onNext={onNext} result={result} />
         : <TouchableOpacity
             style={[sharedStyles.checkAnswerButton, { backgroundColor: buttonColor }]}
             onPress={handleMatch}
@@ -205,15 +213,4 @@ const type5 = () => {
     </View>
   );
 };
-
-
-const styles = StyleSheet.create({
-    matched: {
-        backgroundColor: '#a0ffa0',
-      },
-      selected: {
-        backgroundColor: '#a0c0ff',
-      },
-
-  });
 export default type5;

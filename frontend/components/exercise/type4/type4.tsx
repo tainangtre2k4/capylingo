@@ -6,10 +6,14 @@ import ResultBox from '../exComponents/resultBox';
 import { sharedStyles, correctColor, incorrectAnswerColor } from '../styles/sharedStyles';
 import ResultContent from './resultContent';
 
-const type4 = () => {
+interface Type1Props {
+  onNext: () => void;
+}
+
+const type4: React.FC<Type1Props> = ({ onNext })  => {
 
   const question = "What does the picture mean?";
-  const questionImage = require('../../../../assets/images/nose.png');
+  const questionImage = require('@/assets/images/nose.png');
   const correctAnswerIndex = 2;
   const answers = [
     'hair',
@@ -66,7 +70,7 @@ const type4 = () => {
 
       <ResultBox result={result} content={<ResultContent result={result} answer={answers[correctAnswerIndex]} />} />
 
-      <CheckAnswerButton onPress={checkAnswer} result={result} />
+      <CheckAnswerButton onPress={checkAnswer} onNext={onNext} result={result} />
     </View>
   );
 };

@@ -13,8 +13,11 @@ const words = ['What’s', 'Your', 'Name', '?', 'I', 'Am', 'Ujang'];
 const correctAnswer = ['I', 'Am', 'Ujang', 'What’s', 'Your', 'Name', '?'];
 
 
+interface Type1Props {
+  onNext: () => void;
+}
 
-const type2 = () => {
+const type2: React.FC<Type1Props> = ({ onNext }) => {
     const [selectedWords, setSelectedWords] = useState<string[]>(Array(correctAnswer.length).fill(''));
     const [availableWords, setAvailableWords] = useState<string[]>(words);
     
@@ -83,7 +86,7 @@ const type2 = () => {
             
             <ResultBox result={result} content={<ResultContent result={result} answers={correctAnswer} />} />
 
-            <CheckAnswerButton onPress={handleCheckAnswer} result={result}/>
+            <CheckAnswerButton onPress={handleCheckAnswer} onNext={onNext} result={result}/>
 
         </View>
 

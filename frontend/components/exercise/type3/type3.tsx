@@ -6,7 +6,11 @@ import ResultBox from '../exComponents/resultBox';
 import { sharedStyles, correctColor, incorrectAnswerColor } from '../styles/sharedStyles';
 import ResultContent from './resultContent';
 
-const type3 = () => {
+interface Type1Props {
+  onNext: () => void;
+}
+
+const type3: React.FC<Type1Props> = ({ onNext })  => {
 
   const question = "Our vicar is always ……………money for for one cause or another.";
   const correctAnswerIndex = 0;
@@ -67,7 +71,7 @@ const type3 = () => {
 
         <ResultBox result={result} content={<ResultContent result={result} />} />
 
-        <CheckAnswerButton onPress={checkAnswer} result={result} />
+        <CheckAnswerButton onPress={checkAnswer} onNext={onNext} result={result} />
       </View>
   );
 };
