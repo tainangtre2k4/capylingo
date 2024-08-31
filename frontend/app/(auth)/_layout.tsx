@@ -91,7 +91,7 @@ const TabsPage = () => {
         <Tabs.Screen
         name="(profile)"
         options={{
-          headerTitle: 'My Profile',
+          headerShown: false,
           tabBarIcon: ({ color, size }) => <Ionicons name="person-outline" size={size} color={color} />,
           tabBarLabel: 'My Profile',
         }}

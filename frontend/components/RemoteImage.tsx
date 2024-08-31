@@ -1,24 +1,33 @@
-import { Image } from 'react-native';
-import React, { ComponentProps, useEffect, useMemo, useState } from 'react';
+import { Image, View, ActivityIndicator } from 'react-native';
+import React, { ComponentProps, useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
 
 type RemoteImageProps = {
   path?: string | null;
   fallback: string | null;
+  NameOfStorage: string;
 } & Omit<ComponentProps<typeof Image>, 'source'>;
 
-const RemoteImage = ({ path, fallback,NameOfStorage ,...imageProps }: RemoteImageProps) => {
-  const [image, setImage] = useState('');
+const RemoteImage = ({ path, fallback, NameOfStorage, ...imageProps }: RemoteImageProps) => {
+  const [image, setImage] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
-    if (!path) return;
-    (async () => {
-      setImage('');
+    if (!path) {
+      setImage(fallback); // Immediately set fallback if no path
+      setLoading(false);
+      return;
+    }
+
+    const fetchImage = async () => {
+      setLoading(true);
       const { data, error } = await supabase.storage
         .from(NameOfStorage)
         .download(path);
 
       if (error) {
         console.log(error);
+        setImage(fallback); // Set fallback if there's an error
       }
 
       if (data) {
@@ -28,13 +37,21 @@ const RemoteImage = ({ path, fallback,NameOfStorage ,...imageProps }: RemoteImag
           setImage(fr.result as string);
         };
       }
-    })();
+      setLoading(false);
+    };
+
+    fetchImage();
   }, [path]);
 
-  if (!image) {
-  }
-
-  return <Image source={{ uri: image || fallback }} {...imageProps} />;
+  return (
+    <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+      {loading ? (
+        <ActivityIndicator size="large"  />
+      ) : (
+        <Image source={{ uri: image || fallback }} {...imageProps} />
+      )}
+    </View>
+  );
 };
 
 export default RemoteImage;
