@@ -1,7 +1,6 @@
 import { View, Text,ActivityIndicator } from 'react-native';
 import React from 'react';
 import { useUser } from '@clerk/clerk-expo';
-import useTopicList from '../../src/api/level/index'
 const Home = () => {
   const { user } = useUser();
   // const { data, isLoading, error } = useTopicList();
