@@ -9,6 +9,7 @@ export const incorrectAnswerColor = '#EB5757'; // Màu đỏ
 export const sharedStyles = StyleSheet.create({
   container: {
     flex: 1,
+    width: width,
     padding: width * 0.05,
     alignItems: 'center',
   },
