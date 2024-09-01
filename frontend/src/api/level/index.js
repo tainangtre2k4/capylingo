@@ -13,3 +13,35 @@ import { supabase } from '../../../lib/supabase';
 //     },
 //   });
 // };
+
+export const useVocabExList = (type, topicID) => {
+    let tableName;
+    switch (type) {
+      case 1:
+        tableName = 'VocabExType1';
+        break;
+      case 2:
+        tableName = 'VocabExType2';
+        break;
+      case 3:
+        tableName = 'VocabExType3';
+        break;
+      default:
+        throw new Error('Invalid type provided');
+    }
+  
+    return useQuery({
+      queryKey: [tableName, topicID],
+      queryFn: async () => {
+        const { data, error } = await supabase
+          .from(tableName)
+          .select('*')
+          .eq('TopicId', topicID);
+  
+        if (error) {
+          throw new Error(error.message);
+        }
+        return data;
+      },
+    });
+  };

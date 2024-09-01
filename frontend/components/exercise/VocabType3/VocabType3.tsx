@@ -29,26 +29,27 @@ const generateColors = (numColors: number) => {
     return shuffleArray(colors);
   };
 
-interface Type1Props {
+interface VocabType3Props {
+  question: string;
+  synonyms: string[][];
   onNext: () => void;
 }
-
-const type5: React.FC<Type1Props> = ({ onNext })  => {
-  const question = 'Matching synonyms ';
-  const synonyms = [
-    ['Happy', 'Joyful'],
-    ['Sad', 'Unhappy'],
-    ['Fast', 'Quick'],
-    ['Hello', 'Hi'],
-    // ['Big', 'Large'],
-    // ['Smart', 'Intelligent'],
-    // ['Strong', 'Powerful'],
-    // ['Easy', 'Simple'],
-    // ['Begin', 'Start'],
-    // ['Rich', 'Wealthy'],
-    // ['Quiet', 'Silent'],
-    // ['Brave', 'Courageous'],
-   ];
+const VocabType3: React.FC<VocabType3Props> = ({ question, synonyms, onNext })  => {
+  // const question = 'Matching synonyms ';
+  // const synonyms = [
+  //   ['Happy', 'Joyful'],
+  //   ['Sad', 'Unhappy'],
+  //   ['Fast', 'Quick'],
+  //   ['Hello', 'Hi'],
+  //   // ['Big', 'Large'],
+  //   // ['Smart', 'Intelligent'],
+  //   // ['Strong', 'Powerful'],
+  //   // ['Easy', 'Simple'],
+  //   // ['Begin', 'Start'],
+  //   // ['Rich', 'Wealthy'],
+  //   // ['Quiet', 'Silent'],
+  //   // ['Brave', 'Courageous'],
+  //  ];
 
   const [leftColumn, setLeftColumn] = useState<{ word: string, index: number }[]>([]);
   const [rightColumn, setRightColumn] = useState<{ word: string, index: number }[]>([]);
@@ -213,4 +214,4 @@ const type5: React.FC<Type1Props> = ({ onNext })  => {
     </View>
   );
 };
-export default type5;
+export default VocabType3;

@@ -6,21 +6,14 @@ import ResultBox from '../exComponents/resultBox';
 import { sharedStyles, correctColor, incorrectAnswerColor } from '../styles/sharedStyles';
 import ResultContent from './resultContent';
 
-interface Type1Props {
+
+interface VocabType2Props {
+  question: string;
+  correctAnswerIndex: number;
+  answers: string[];
   onNext: () => void;
 }
-
-const type3: React.FC<Type1Props> = ({ onNext })  => {
-
-  const question = "Our vicar is always ……………money for for one cause or another.";
-  const correctAnswerIndex = 0;
-  const answers = [
-    'lifting',
-    'gathering',
-    'raising',
-    'asking',
-  ];
-
+const VocabType2: React.FC<VocabType2Props> = ({ question, correctAnswerIndex, answers, onNext }) => {
   
   const [userAnswer, setUserAnswer] = useState<number | null>(null);
   const [result, setResult] = useState<'correct' | 'incorrect' | null>(null);
@@ -76,4 +69,4 @@ const type3: React.FC<Type1Props> = ({ onNext })  => {
   );
 };
 
-export default type3;
+export default VocabType2;
