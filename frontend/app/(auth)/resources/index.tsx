@@ -104,9 +104,9 @@ const Square = ({scrollX}) => {
         width: height,
         height: height,
         backgroundColor: '#fff',
-        borderRadius: 86,
+        borderRadius: 90,
         position: 'absolute',
-        top: -height * 0.68,
+        top: -height * 0.7,
         left: -height *0.32,
         transform: [
           {
@@ -178,7 +178,7 @@ export default function App() {
           justifyContent: 'center',
           borderRadius: '30',
         }}>
-            <Text style={{fontWeight: '600', fontSize: '18', color: '#707070'}}>Yes, Captain Capybara !</Text>
+            <Text style={{fontWeight: '600', fontSize: 18, color: '#707070'}}>Yes, Captain Capybara !</Text>
       </TouchableOpacity>
     </View>
   );
