@@ -1,14 +1,19 @@
 import { router } from 'expo-router';
 import React from 'react';
 import { View, Text, StyleSheet, SafeAreaView, Image, Dimensions, TouchableOpacity } from 'react-native';
-const { width } = Dimensions.get('window');
+import { useAuth } from '@clerk/clerk-expo';  
 
+const { width } = Dimensions.get('window');
 export default function Home() {
+  const { signOut } = useAuth();
   // Assume these variables are passed in as props or derived from state
   const numberOfNewAchievement = 2; // Example value, replace with actual state or props
   const actionNeeded = true; // Example value, replace with actual state or props
   const ChangeInformationHandler = () => {
     router.push('/changeInformation')
+  }
+  const logOutHandler = () => {
+    signOut();
   }
   return (
     <View style={styles.container}>
@@ -105,6 +110,14 @@ export default function Home() {
               <Image source={require('../../../assets/images/profileScreen/arrow.png')} style={styles.arrow} />
             </View>
           </TouchableOpacity>
+        </View>
+
+        <View style={[styles.dashboardContainer,{gap: 10}]}>
+            <Text style={{fontSize:12, color:'#898A8D'}}>My Account</Text>
+            <TouchableOpacity onPress={logOutHandler}>
+              <Text style={{fontSize:14, color: '#3E5FAF',marginBottom:5}}>Switch to Another Account</Text>
+              <Text style={{fontSize:14, color: '#FB6D64'}}>Logout Account</Text>
+            </TouchableOpacity>
         </View>
       </SafeAreaView>
     </View>
