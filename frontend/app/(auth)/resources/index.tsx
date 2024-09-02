@@ -176,9 +176,9 @@ export default function App() {
           backgroundColor: '#fff',
           alignItems: 'center',
           justifyContent: 'center',
-          borderRadius: '30',
+          borderRadius: 30,
         }}>
-            <Text style={{fontWeight: '600', fontSize: '18', color: '#707070'}}>Yes, Captain Capybara !</Text>
+            <Text style={{fontWeight: '600', fontSize: 18, color: '#707070'}}>Yes, Captain Capybara !</Text>
       </TouchableOpacity>
     </View>
   );

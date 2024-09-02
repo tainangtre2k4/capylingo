@@ -27,7 +27,7 @@ const TabsPage = () => {
 
   const page = segment.join('/')
 
-  const pagesToHideTabBar = ['vocabulary/type1', 'skillcheck/reading']
+  const pagesToHideTabBar = ['vocabulary/type1', 'skillcheck/reading', "skillcheck/listening"]
 
   const checkPageToHideTabBar = (): boolean => {
     for (const s of pagesToHideTabBar)
