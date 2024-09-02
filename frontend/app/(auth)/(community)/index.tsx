@@ -21,7 +21,6 @@ const FeedScreen = () => {
     }
     setPosts(data);
   }
-  console.log(posts);
 
   const router =useRouter();
   

@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Button, TextInput, StyleSheet,Image,ActivityIndicator,TouchableOpacity } from 'react-native';
+import { View, Text, TextInput, StyleSheet, Image, ActivityIndicator, TouchableOpacity, useWindowDimensions } from 'react-native';
 import { useUser } from '@clerk/clerk-expo'; // Clerk for authentication
 import { supabase } from '../../../lib/supabase';
 import * as ImagePicker from 'expo-image-picker';
-import * as FileSystem from 'expo-file-system';
-import { randomUUID } from 'expo-crypto';
-import { decode } from 'base64-arraybuffer';
-import RemoteImage from '../../../components/RemoteImage';
+import { AdvancedImage } from 'cloudinary-react-native';
 import colors from '@/constants/Colors';
+import { cld, uploadImage } from '@/lib/cloudinary';
+import { thumbnail } from "@cloudinary/url-gen/actions/resize";
+import { useRouter } from 'expo-router';
 
 const Profile = () => {
   const { user } = useUser(); // Get authenticated user from Clerk
@@ -15,9 +15,13 @@ const Profile = () => {
   const [lastName, setLastName] = useState('');
   const [username, setUserName] = useState('');
   const [loading, setLoading] = useState(true);
+  const [updating, setUpdating] = useState(false); // State for managing update loading
   const [image, setImage] = useState<string | null>(null);
-  const defaultPizzaImage =
-  'https://notjustdev-dummy.s3.us-east-2.amazonaws.com/food/default.png';
+  const [remoteImage, setRemoteImage] = useState<string | null>(null);
+  const defaultPizzaImage = 'https://wyudvuxiilqxhorovjcn.supabase.co/storage/v1/object/public/ProfileImage/profile-user-icon-isolated-on-white-background-eps10-free-vector.jpg';
+  const router = useRouter();
+  const { width } = useWindowDimensions();
+
   useEffect(() => {
     if (user?.id) {
       fetchUserData();
@@ -38,11 +42,14 @@ const Profile = () => {
       }
 
       if (data) {
-        console.log(data)
         setFirstName(data.first_name);
         setLastName(data.last_name);
-        setImage(data.avatar_url)
-        setUserName(data.username)
+        setUserName(data.username);
+
+        // Check if avatar_url has the prefix 'https://img.clerk.com/' before setting the state
+        if (!data.avatar_url.startsWith('https://img.clerk.com/')) {
+          setRemoteImage(data.avatar_url)
+        }
       }
     } catch (error: any) {
       console.log('Error fetching user data:', error.message);
@@ -53,16 +60,22 @@ const Profile = () => {
 
   // Update user data in Supabase
   const onSaveUser = async () => {
+    setUpdating(true); // Start the loading indicator
     try {
-      const imagePath = await uploadImage();
+      const updatedProfile = {
+        id: user?.id,
+        first_name: firstName,
+        last_name: lastName,
+        username: username,
+        avatar_url: remoteImage,
+      };
+      if (image) {
+        const response = await uploadImage(image);
+        updatedProfile.avatar_url = response.public_id;
+      }
       const { data, error } = await supabase
         .from('users')
-        .update({
-          first_name: firstName,
-          last_name: lastName,
-          avatar_url: imagePath,
-          username: username
-        })
+        .update(updatedProfile)
         .eq('id', user?.id);
 
       if (error) {
@@ -70,24 +83,24 @@ const Profile = () => {
       }
 
       console.log('User data updated:', data);
-      console.log('User data updated:',imagePath);
+      console.log('User data updated:', updatedProfile);
     } catch (e: any) {
       console.log('Error updating user data:', e.message);
+    } finally {
+      setUpdating(false); // Stop the loading indicator
+      router.back();
     }
   };
 
   if (loading) {
-    return (
-      <ActivityIndicator/>
-    );
+    return <ActivityIndicator size="large" color={colors.primary.primary80} />;
   }
 
   const pickImage = async () => {
-    // No permissions request is necessary for launching the image library
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
-      aspect: [1,1],
+      aspect: [1, 1],
       quality: 1,
     });
 
@@ -96,78 +109,68 @@ const Profile = () => {
     }
   };
 
-  const uploadImage = async () => {
-    if (!image?.startsWith('file://')) {
-      return;
-    }
-  
-    const base64 = await FileSystem.readAsStringAsync(image, {
-      encoding: 'base64',
-    });
-    const filePath = `${randomUUID()}.png`;
-    const contentType = 'image/png';
-    const { data, error } = await supabase.storage
-      .from('ProfileImage')
-      .upload(filePath, decode(base64), { contentType });
-    
-    console.log(error)
-    if (data) {
-      return data.path;
-    }
-  };
-  const isRemoteImage = image && /^[a-zA-Z0-9-]+\.png$/.test(image);
+  // Generate the Cloudinary image URL (without using hooks inside conditional statements)
+  const remoteCldImage = remoteImage
+    ? cld.image(remoteImage).resize(thumbnail().width(width).height(width))
+    : null;
 
   return (
     <View style={styles.container}>
-      <View style={{marginBottom: 16,}}>
-        {isRemoteImage ? (
-          <RemoteImage
-            path={image}
-            fallback={defaultPizzaImage}
-            NameOfStorage={'ProfileImage'}
-            style={styles.image}
+      <View style={{ marginBottom: 16 }}>
+        {image ? (
+          <Image
+            source={{ uri: image || defaultPizzaImage }}
+            className='w-52 aspect-square self-center rounded-full bg-slate-300'
+          />
+        ) : remoteCldImage ? (
+          <AdvancedImage
+            cldImg={remoteCldImage}
+            className="w-52 aspect-square self-center rounded-full bg-slate-300"
           />
         ) : (
           <Image
-            source={{ uri: image || defaultPizzaImage }}
-            style={styles.image}
+            source={{ uri: defaultPizzaImage }}
+            className='w-52 aspect-square self-center rounded-full bg-slate-300'
           />
         )}
         <Text onPress={pickImage}>
           Select Image
         </Text>
-        </View>
-      <View>
-      <Text style={{fontSize: 16}}>First Name</Text>
-      <TextInput
-        placeholder="First Name"
-        value={firstName}
-        onChangeText={setFirstName}
-        style={styles.inputField}
-      />
       </View>
       <View>
-      <Text style={{fontSize: 16}}>Last Name</Text>
-      <TextInput
-        placeholder="Last Name"
-        value={lastName}
-        onChangeText={setLastName}
-        style={styles.inputField}
-      />
+        <Text style={{ fontSize: 16 }}>First Name</Text>
+        <TextInput
+          placeholder="First Name"
+          value={firstName}
+          onChangeText={setFirstName}
+          style={styles.inputField}
+        />
       </View>
       <View>
-      <Text style={{fontSize: 16}}>User Name</Text>
-      <TextInput
-        placeholder="User Name"
-        value={username}
-        onChangeText={setUserName}
-        style={styles.inputField}
-      />
+        <Text style={{ fontSize: 16 }}>Last Name</Text>
+        <TextInput
+          placeholder="Last Name"
+          value={lastName}
+          onChangeText={setLastName}
+          style={styles.inputField}
+        />
       </View>
-      <TouchableOpacity onPress={onSaveUser} style={styles.button}>
-        <Text style={{fontSize: 20,color:'#fff'}}>Save Changes</Text>
-      </TouchableOpacity>
-
+      <View>
+        <Text style={{ fontSize: 16 }}>User Name</Text>
+        <TextInput
+          placeholder="User Name"
+          value={username}
+          onChangeText={setUserName}
+          style={styles.inputField}
+        />
+      </View>
+      {updating ? (
+        <ActivityIndicator size="large" color={colors.primary.primary80} />
+      ) : (
+        <TouchableOpacity onPress={onSaveUser} style={styles.button}>
+          <Text style={{ fontSize: 20, color: '#fff' }}>Save Changes</Text>
+        </TouchableOpacity>
+      )}
     </View>
   );
 };
@@ -193,7 +196,7 @@ const styles = StyleSheet.create({
     aspectRatio: 1,
     alignSelf: 'center',
   },
-  button:{
+  button: {
     marginTop: 16,
     alignItems: 'center',
     padding: 16,

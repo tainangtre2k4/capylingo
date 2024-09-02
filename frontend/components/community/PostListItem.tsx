@@ -12,8 +12,13 @@ export default function PostListItem({post}){
     const image = cld.image(post.image);
     image.resize(thumbnail().width(width).height(width))
 
-    const avatar = cld.image(post.user.avatar_url || 'user_ynfjc7');
-    avatar.resize(thumbnail().width(48).height(48).gravity(focusOn(FocusOn.face())))
+    const avatarUrl = post.user.avatar_url;
+    const avatar = cld.image(
+      avatarUrl && avatarUrl.startsWith('https://img.clerk.com/')
+        ? 'user_ynfjc7'
+        : avatarUrl || 'user_ynfjc7'
+    );
+    avatar.resize(thumbnail().width(48).height(48).gravity(focusOn(FocusOn.face())));
 
     return (
         <View className='bg-white'>
