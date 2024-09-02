@@ -1,6 +1,6 @@
 import { Tabs } from 'expo-router';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
-import { Pressable } from 'react-native';
+import {Pressable, SafeAreaView} from 'react-native';
 import { useAuth } from '@clerk/clerk-expo';
 import React, {useEffect} from 'react';
 import { StatusBar } from 'expo-status-bar'
@@ -45,7 +45,7 @@ const TabsPage = () => {
   }, []);
 
   return (
-    <>
+    <SafeAreaView style={{flex: 1}}>
       <StatusBar style='light' backgroundColor='#3DB2FF' />
       <Tabs
         screenOptions={{
@@ -68,6 +68,15 @@ const TabsPage = () => {
           }}
           redirect={!isSignedIn}
         />
+      <Tabs.Screen
+          name="dictionary"
+          options={{
+              tabBarIcon: ({ color, size }) => <Ionicons name="file-tray-full" size={size} color={color} />,
+              tabBarLabel: 'Dictionary',
+              headerShown: false,
+          }}
+          redirect={!isSignedIn}
+      />
         <Tabs.Screen
           name="resources"
           options={{
@@ -89,7 +98,7 @@ const TabsPage = () => {
           redirect={!isSignedIn}
         />
       </Tabs>
-    </>
+    </SafeAreaView>
   );
 };
 

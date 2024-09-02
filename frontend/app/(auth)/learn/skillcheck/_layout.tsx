@@ -1,10 +1,8 @@
 import React from 'react'
-import { Stack } from 'expo-router'
-import HeaderProgressTracker from "@/components/learn/HeaderProgressTracker";
-import {StatusBar} from 'expo-status-bar';
+import {Stack} from 'expo-router'
 
 const SkillcheckStack = () => {
-  return <Stack screenOptions={{headerShown: false}} />
+    return <Stack screenOptions={{headerShown: false}}/>
 }
 
 export default SkillcheckStack

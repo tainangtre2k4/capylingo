@@ -1,15 +1,17 @@
 import {
+    Alert,
     Dimensions,
     Image,
+    Pressable,
+    ScrollView,
     StatusBar as RNStatusBar,
     StyleSheet,
     Text,
+    TextInput,
     TouchableOpacity,
-    View,
-    ScrollView,
-    Pressable, TextInput, Alert
+    View
 } from 'react-native'
-import React, {useEffect, useState, useContext, useRef, useMemo, useCallback} from 'react'
+import React, {useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react'
 import {useNavigation} from 'expo-router'
 import BackButton from "@/components/BackButton";
 import HeaderProgressTracker from "@/components/learn/HeaderProgressTracker";
@@ -24,44 +26,55 @@ import {solutions} from "@/app/(auth)/learn/skillcheck/listening/Resources";
 const {width, height} = Dimensions.get('window')
 
 const ListeningArticle = () => {
-  const navigation = useNavigation();
-  const MIN_FONT_SIZE = 14;
-  const MAX_FONT_SIZE = 28;
-  const DEFAULT_FONT_SIZE = 14;
-  const [fontSize, setFontSize] = useState(DEFAULT_FONT_SIZE);
-  const { curIndex, maxIndex, answers, setAnswers, prevPassage, nextPassage, questionSheet, audioSource } = useContext(ListeningContext);
-  const [isToolbarHidden, setToolbarHidden] = useState<boolean>(false);
+    const navigation = useNavigation();
+    const MIN_FONT_SIZE = 14;
+    const MAX_FONT_SIZE = 28;
+    const DEFAULT_FONT_SIZE = 14;
+    const [fontSize, setFontSize] = useState(DEFAULT_FONT_SIZE);
+    const {
+        curIndex,
+        maxIndex,
+        answers,
+        setAnswers,
+        prevPassage,
+        nextPassage,
+        questionSheet,
+        audioSource
+    } = useContext(ListeningContext);
+    const [isToolbarHidden, setToolbarHidden] = useState<boolean>(false);
 
     const increaseFontSize = () => {
-    if (fontSize < MAX_FONT_SIZE) {
-      setFontSize(prevSize => prevSize + 2);
-    }
-  };
+        if (fontSize < MAX_FONT_SIZE) {
+            setFontSize(prevSize => prevSize + 2);
+        }
+    };
 
-  const decreaseFontSize = () => {
-    if (fontSize > MIN_FONT_SIZE) {
-      setFontSize(prevSize => prevSize - 2);
-    }
-  };
+    const decreaseFontSize = () => {
+        if (fontSize > MIN_FONT_SIZE) {
+            setFontSize(prevSize => prevSize - 2);
+        }
+    };
 
-  useEffect(() => {
-      navigation.setOptions({
-          header: () => (
-              <View style={styles.headerContainer}>
-                  <BackButton/>
-                  <HeaderProgressTracker current={curIndex + 1} all={maxIndex + 1}/>
-                  <TouchableOpacity style={styles.headerRightIconContainer}
-                                    onPress={() => {setToolbarHidden(!isToolbarHidden)}}
-                                    activeOpacity={0.6}>
-                      <Ionicons name={isToolbarHidden ? 'eye-off' : 'eye'} size={24} color='#0693F1'/>
-                  </TouchableOpacity>
-              </View>
-          ),
-          headerTitleStyle: {
-              color: 'white'
-          },
-      });
-  }, [navigation, curIndex, maxIndex, isToolbarHidden]);
+    useEffect(() => {
+        navigation.setOptions({
+            header: () => (
+                <View style={styles.headerContainer}>
+                    <BackButton/>
+                    <HeaderProgressTracker current={curIndex + 1} all={maxIndex + 1}/>
+                    <TouchableOpacity style={styles.headerRightIconContainer}
+                                      onPress={() => {
+                                          setToolbarHidden(!isToolbarHidden)
+                                      }}
+                                      activeOpacity={0.6}>
+                        <Ionicons name={isToolbarHidden ? 'eye-off' : 'eye'} size={24} color='#0693F1'/>
+                    </TouchableOpacity>
+                </View>
+            ),
+            headerTitleStyle: {
+                color: 'white'
+            },
+        });
+    }, [navigation, curIndex, maxIndex, isToolbarHidden]);
 
     // hooks
     const sheetRef = useRef<BottomSheet>(null);
@@ -85,8 +98,7 @@ const ListeningArticle = () => {
             return answers.slice(10, 20);
         } else if (curIndex === 2) {
             return answers.slice(20, 30);
-        }
-        else {
+        } else {
             return answers.slice(30);
         }
     };
@@ -112,98 +124,101 @@ const ListeningArticle = () => {
             [
                 {
                     text: "Confirm",
-                    onPress: () => {},
+                    onPress: () => {
+                    },
                 }
             ],
-            { cancelable: false }
+            {cancelable: false}
         );
 
     }
 
 
     return (
-      <GestureHandlerRootView style={styles.container}>
-          <View style={[styles.controllerContainer, { padding: isToolbarHidden ? 0 : 6}]}>
-              {!isToolbarHidden && (
-                  <View style={styles.controller}>
-                      <Pressable style={styles.controllerIconContainer} onPress={increaseFontSize} android_ripple={{color:'#F3F3F3'}}>
-                          <Image source={require('../../../../../assets/images/skillcheck/text_up.png')}
-                                 style={styles.controllerText}/>
-                          <Text style={styles.controllerLabel}>Zoom in</Text>
-                      </Pressable>
-                      <Pressable style={styles.controllerIconContainer} onPress={decreaseFontSize}>
-                          <Image source={require('../../../../../assets/images/skillcheck/text_down.png')}
-                                 style={styles.controllerText}/>
-                          <Text style={styles.controllerLabel}>Zoom out</Text>
-                      </Pressable>
-                      <Pressable style={styles.controllerIconContainer} onPress={prevPassage}>
-                          <Ionicons name="arrow-back" size={24} color="black"/>
-                          <Text style={styles.controllerLabel}>Previous</Text>
-                      </Pressable>
-                      <Pressable style={styles.controllerIconContainer} onPress={nextPassage}>
-                          <Ionicons name="arrow-forward" size={24} color="black"/>
-                          <Text style={styles.controllerLabel}>Next</Text>
-                      </Pressable>
-                  </View>
-              )}
-              <AudioPlayer audioSource={audioSource} />
-          </View>
-          <ScrollView style={styles.scrollViewContainer} overScrollMode='never'>
-              <RenderHTML defaultTextProps={{selectable: true, style: { fontSize } }} source={questionSheet} contentWidth={width}/>
-          </ScrollView>
-          <BottomSheet
-              ref={sheetRef}
-              index={0}
-              snapPoints={snapPoints}
-              onChange={handleSheetChange}
-              handleStyle={styles.bottomSheetHandle}
-              backgroundStyle={styles.bottomSheetHandle}
-              handleIndicatorStyle={styles.bottomSheetIndicator}
-          >
-              <View style={styles.bottomSheetHeader}>
-                  <Text style={styles.bottomSheetTitle}>Answer Sheet</Text>
-                  <View style={{ flex: 1 }} />
-              </View>
-              <BottomSheetScrollView contentContainerStyle={styles.bottomSheetContainer}>
-                  {visibleAnswers.map((answer, index) => {
-                      const globalIndex = curIndex * 10 + index;
-                      return (
-                          <View key={globalIndex} style={styles.inputContainer}>
-                              <Text style={styles.answerNumberText}>{globalIndex + 1}</Text>
-                              <TextInput
-                                  style={styles.answerInput}
-                                  value={answer}
-                                  onChangeText={(text) => handleInputChange(text, globalIndex)}
-                              />
-                          </View>
-                      );
-                  })}
-                  <TouchableOpacity style={styles.submitButton}
-                                    onPress={() => {
-                                        Alert.alert(
-                                            "Submit All",
-                                            "Are you sure you want to continue?",
-                                            [
-                                                {
-                                                    text: "Cancel",
-                                                    style: "destructive"
-                                                },
-                                                {
-                                                    text: "Submit",
-                                                    onPress: showGrade
-                                                }
-                                            ]
-                                        );
-                                    }}
+        <GestureHandlerRootView style={styles.container}>
+            <View style={[styles.controllerContainer, {padding: isToolbarHidden ? 0 : 6}]}>
+                {!isToolbarHidden && (
+                    <View style={styles.controller}>
+                        <Pressable style={styles.controllerIconContainer} onPress={increaseFontSize}
+                                   android_ripple={{color: '#F3F3F3'}}>
+                            <Image source={require('../../../../../assets/images/skillcheck/text_up.png')}
+                                   style={styles.controllerText}/>
+                            <Text style={styles.controllerLabel}>Zoom in</Text>
+                        </Pressable>
+                        <Pressable style={styles.controllerIconContainer} onPress={decreaseFontSize}>
+                            <Image source={require('../../../../../assets/images/skillcheck/text_down.png')}
+                                   style={styles.controllerText}/>
+                            <Text style={styles.controllerLabel}>Zoom out</Text>
+                        </Pressable>
+                        <Pressable style={styles.controllerIconContainer} onPress={prevPassage}>
+                            <Ionicons name="arrow-back" size={24} color="black"/>
+                            <Text style={styles.controllerLabel}>Previous</Text>
+                        </Pressable>
+                        <Pressable style={styles.controllerIconContainer} onPress={nextPassage}>
+                            <Ionicons name="arrow-forward" size={24} color="black"/>
+                            <Text style={styles.controllerLabel}>Next</Text>
+                        </Pressable>
+                    </View>
+                )}
+                <AudioPlayer audioSource={audioSource}/>
+            </View>
+            <ScrollView style={styles.scrollViewContainer} overScrollMode='never'>
+                <RenderHTML defaultTextProps={{selectable: true, style: {fontSize}}} source={questionSheet}
+                            contentWidth={width}/>
+            </ScrollView>
+            <BottomSheet
+                ref={sheetRef}
+                index={0}
+                snapPoints={snapPoints}
+                onChange={handleSheetChange}
+                handleStyle={styles.bottomSheetHandle}
+                backgroundStyle={styles.bottomSheetHandle}
+                handleIndicatorStyle={styles.bottomSheetIndicator}
+            >
+                <View style={styles.bottomSheetHeader}>
+                    <Text style={styles.bottomSheetTitle}>Answer Sheet</Text>
+                    <View style={{flex: 1}}/>
+                </View>
+                <BottomSheetScrollView contentContainerStyle={styles.bottomSheetContainer}>
+                    {visibleAnswers.map((answer, index) => {
+                        const globalIndex = curIndex * 10 + index;
+                        return (
+                            <View key={globalIndex} style={styles.inputContainer}>
+                                <Text style={styles.answerNumberText}>{globalIndex + 1}</Text>
+                                <TextInput
+                                    style={styles.answerInput}
+                                    value={answer}
+                                    onChangeText={(text) => handleInputChange(text, globalIndex)}
+                                />
+                            </View>
+                        );
+                    })}
+                    <TouchableOpacity style={styles.submitButton}
+                                      onPress={() => {
+                                          Alert.alert(
+                                              "Submit All",
+                                              "Are you sure you want to continue?",
+                                              [
+                                                  {
+                                                      text: "Cancel",
+                                                      style: "destructive"
+                                                  },
+                                                  {
+                                                      text: "Submit",
+                                                      onPress: showGrade
+                                                  }
+                                              ]
+                                          );
+                                      }}
 
-                  >
-                      <Text style={styles.submitText}>Submit All</Text>
-                  </TouchableOpacity>
-              </BottomSheetScrollView>
-          </BottomSheet>
-      </GestureHandlerRootView>
+                    >
+                        <Text style={styles.submitText}>Submit All</Text>
+                    </TouchableOpacity>
+                </BottomSheetScrollView>
+            </BottomSheet>
+        </GestureHandlerRootView>
 
-  )
+    )
 }
 
 export default ListeningArticle
