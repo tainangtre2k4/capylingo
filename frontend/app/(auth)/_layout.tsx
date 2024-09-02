@@ -95,6 +95,14 @@ const TabsPage = () => {
           }}
           redirect={!isSignedIn}
         />
+        <Tabs.Screen
+          name="(community)"
+          options={{
+            headerShown: false,
+            tabBarLabel: 'Commuity',
+          }}
+          redirect={!isSignedIn}
+        />
     </Tabs>
     </>
   );
