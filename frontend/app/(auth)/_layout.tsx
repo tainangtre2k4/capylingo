@@ -76,7 +76,7 @@ const TabsPage = () => {
               headerShown: false,
           }}
           redirect={!isSignedIn}
-      />
+        />
         <Tabs.Screen
           name="resources"
           options={{
