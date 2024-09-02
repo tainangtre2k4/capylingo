@@ -1,18 +1,22 @@
-import React, {useContext, useEffect, useRef, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {
+    Alert,
+    Dimensions,
+    FlatList,
     Platform,
     ScrollView,
     StatusBar as RNStatusBar,
     StyleSheet,
     Text,
-    TextInput,
     TouchableOpacity,
-    View
+    View,
 } from 'react-native';
 import {Audio} from 'expo-av';
 import {Ionicons} from '@expo/vector-icons';
-import {useNavigation, useRouter} from 'expo-router'
+import {useNavigation, useRouter} from 'expo-router';
 import {DictionaryContext} from "./_layout";
+
+const {width, height} = Dimensions.get('window')
 
 type Meaning = {
     partOfSpeech: string;
@@ -25,31 +29,50 @@ type WordData = {
     meanings: Meaning[];
 };
 
-const Dictionary = () => {
-    const router = useRouter();
+const Favorite = () => {
     const navigation = useNavigation();
-    const [newWord, setNewWord] = useState<string>('');
+    const router = useRouter();
     const [checkedWord, setCheckedWord] = useState<string>('');
-    const [lastSearchedWord, setLastSearchedWord] = useState<string>('');
     const [sound, setSound] = useState<Audio.Sound | null>(null);
     const [data, setData] = useState<WordData | null>(null);
     const [error, setError] = useState<string | null>(null);
-    const inputRef = useRef<TextInput | null>(null);
-    const {history, favorite, setHistory, setFavorite} = useContext(DictionaryContext);
+    const [expandedItem, setExpandedItem] = useState<string | null>(null);
+    const {favorite, setHistory, setFavorite} = useContext(DictionaryContext);
+
+    const handleFavoriteDeleteAll = () => {
+        Alert.alert(
+            "Delete All Favorites",
+            "All Favorite entries will be deleted! Still proceed?",
+            [
+                {
+                    text: "Cancel",
+                    onPress: () => {},
+                    style: "cancel",
+                },
+                {
+                    text: "Confirm",
+                    onPress: () => {setFavorite([])},
+                    style: "destructive",
+                }
+            ],
+        );
+    }
 
     useEffect(() => {
         navigation.setOptions({
             headerShown: true,
             header: () => (
                 <View style={styles.headerContainer}>
-                    <Text style={styles.headerTitle}>Dictionary</Text>
+                    <Text style={styles.headerTitle}>Favorite</Text>
                     <View style={styles.headerIconsContainer}>
-                        <TouchableOpacity style={styles.headerIcon} activeOpacity={0.6} onPress={() => {router.push('/dictionary/history')}}>
-                            <Ionicons name='timer-outline' size={24} color='#0693F1'/>
+                        <TouchableOpacity style={styles.headerIcon} activeOpacity={0.6} onPress={handleFavoriteDeleteAll}>
+                            <Ionicons name='trash' size={24} color='#0693F1'/>
                         </TouchableOpacity>
                         <View style={{marginHorizontal: 10}}/>
-                        <TouchableOpacity style={styles.headerIcon} activeOpacity={0.6} onPress={() => {router.push('/dictionary/favorite')}}>
-                            <Ionicons name='star-outline' size={24} color='#0693F1'/>
+                        <TouchableOpacity style={styles.headerIcon} activeOpacity={0.6} onPress={() => {
+                            router.back();
+                        }}>
+                            <Ionicons name='star' size={24} color='#0693F1'/>
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -60,13 +83,12 @@ const Dictionary = () => {
         });
     }, [navigation]);
 
-    const getInfo = async () => {
-        // Prevent search if input is empty or if the word hasn't changed
-        if (!newWord.trim() || newWord === lastSearchedWord) {
+    const getInfo = async (item: string) => {
+        if (!item.trim()) {
             return;
         }
 
-        const url = `https://api.dictionaryapi.dev/api/v2/entries/en/${newWord}`;
+        const url = `https://api.dictionaryapi.dev/api/v2/entries/en/${item}`;
 
         try {
             const response = await fetch(url);
@@ -76,7 +98,6 @@ const Dictionary = () => {
                 const wordData: WordData = fetchedData[0];
                 setData(wordData);
                 setCheckedWord(wordData.word);
-                setLastSearchedWord(newWord);  // Update last searched word
 
                 // Update history: remove old entry if exists, then add new word at the top
                 setHistory((prevHistory) => {
@@ -112,18 +133,6 @@ const Dictionary = () => {
         }
     };
 
-    const clear = async () => {
-        setCheckedWord('');
-        setNewWord('');
-        setData(null);
-        setLastSearchedWord('');  // Reset the last searched word
-        inputRef.current?.clear();  // Clear the input field
-
-        if (sound) {
-            await sound.unloadAsync();
-        }
-    };
-
     const handleFavorite = () => {
         if (checkedWord) {
             setFavorite((prevFavorites) => {
@@ -138,70 +147,81 @@ const Dictionary = () => {
         }
     };
 
+    const renderHistoryItem = ({item}: { item: string }) => {
+        const isExpanded = expandedItem === item;
+
+        const handleToggle = () => {
+            if (isExpanded) {
+                setExpandedItem(null); // Retract if already expanded
+            } else {
+                setExpandedItem(item);
+                getInfo(item);
+            }
+        };
+
+        return (
+            <View style={[isExpanded ? null : styles.historyItem, {marginVertical: 10}]}>
+                <TouchableOpacity onPress={handleToggle} activeOpacity={0.6} style={{flexDirection: 'row', flex: 1}}>
+                    {!isExpanded && <Text style={styles.historyText}>{item}</Text>}
+                </TouchableOpacity>
+                {isExpanded && checkedWord === item && !error && (
+                    <View style={styles.resultsContainer}>
+                        <View style={styles.resultHeaderContainer}>
+                            <TouchableOpacity onPress={handleToggle} activeOpacity={0.6}>
+                                <Text style={styles.word}>{checkedWord}</Text>
+                            </TouchableOpacity>
+                            <View style={styles.headerIconsContainer}>
+                                <TouchableOpacity style={styles.cardButton} onPress={playAudio}>
+                                    <Ionicons name="volume-high" size={28} color="white"/>
+                                </TouchableOpacity>
+                                <View style={{marginHorizontal: 10}}/>
+                                <TouchableOpacity style={styles.cardButton} onPress={handleFavorite}>
+                                    <Ionicons
+                                        name={favorite.includes(checkedWord) ? "star" : "star-outline"}
+                                        size={28}
+                                        color="white"
+                                    />
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                        <ScrollView overScrollMode='never' style={{height: height * 0.3}}>
+                            {data?.meanings.map((meaning, index) => (
+                                <View key={index}>
+                                    <Text style={styles.partOfSpeech}>{meaning.partOfSpeech}</Text>
+                                    {meaning.definitions.map((definition, defIndex) => (
+                                        <View key={defIndex}>
+                                            <Text style={styles.resultText}>
+                                                Definition: {definition.definition}
+                                            </Text>
+                                            {definition.example && (
+                                                <Text style={styles.resultText}>
+                                                    Example: {definition.example}
+                                                </Text>
+                                            )}
+                                        </View>
+                                    ))}
+                                </View>
+                            ))}
+                        </ScrollView>
+                    </View>
+                )}
+            </View>
+        );
+    }
+
     return (
         <View style={styles.container}>
-            <View style={styles.inputContainer}>
-                <TextInput
-                    ref={inputRef}
-                    style={styles.input}
-                    placeholder="Search..."
-                    value={newWord}
-                    onChangeText={setNewWord}
-                />
-                <TouchableOpacity style={styles.button} onPress={getInfo} activeOpacity={0.6}>
-                    <Ionicons name='search' size={24} color='white'/>
-                </TouchableOpacity>
-            </View>
-            {error && <Text style={styles.errorText}>{error}</Text>}
-            {checkedWord && !error && (
-                <View style={styles.resultsContainer}>
-                    <View style={styles.resultHeaderContainer}>
-                        <Text style={styles.word}>{checkedWord}</Text>
-                        <View style={styles.headerIconsContainer}>
-                            <TouchableOpacity style={styles.cardButton} onPress={playAudio}>
-                                <Ionicons name="volume-high" size={28} color="white"/>
-                            </TouchableOpacity>
-                            <View style={{marginHorizontal: 10}}/>
-                            <TouchableOpacity style={styles.cardButton} onPress={handleFavorite}>
-                                <Ionicons
-                                    name={favorite.includes(checkedWord) ? "star" : "star-outline"}
-                                    size={28}
-                                    color="white"
-                                />
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-                    <ScrollView overScrollMode='never' style={{flexGrow: 0}}>
-                        {data?.meanings.map((meaning, index) => (
-                            <View key={index}>
-                                <Text style={styles.partOfSpeech}>{meaning.partOfSpeech}</Text>
-                                {meaning.definitions.map((definition, defIndex) => (
-                                    <View key={defIndex}>
-                                        <Text style={styles.resultText}>
-                                            Definition: {definition.definition}
-                                        </Text>
-                                        {definition.example && (
-                                            <Text style={styles.resultText}>
-                                                Example: {definition.example}
-                                            </Text>
-                                        )}
-                                    </View>
-                                ))}
-                            </View>
-                        ))}
-                    </ScrollView>
-                </View>
-            )}
-            {newWord ? (
-                <TouchableOpacity style={styles.clearButton} onPress={clear} activeOpacity={0.6}>
-                    <Text style={styles.clearButtonText}>Clear</Text>
-                </TouchableOpacity>
-            ) : null}
+            <FlatList
+                data={favorite}
+                renderItem={renderHistoryItem}
+                keyExtractor={(item, index) => index.toString()}
+                overScrollMode='never'
+            />
         </View>
     );
 };
 
-export default Dictionary;
+export default Favorite;
 
 
 const styles = StyleSheet.create({
@@ -234,7 +254,6 @@ const styles = StyleSheet.create({
     },
     container: {
         flex: 1,
-        alignItems: 'center',
         backgroundColor: '#F3F3F3',
         padding: 20,
         paddingBottom: 170,
@@ -243,23 +262,6 @@ const styles = StyleSheet.create({
         color: 'red',
         fontSize: 24,
         marginTop: 10,
-    },
-    inputContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginBottom: 20,
-        backgroundColor: '#FFF',
-        borderRadius: 14,
-        shadowColor: 'black',
-        elevation: 4,
-        shadowOffset: {width: 0, height: 2},
-        shadowOpacity: 0.2,
-        shadowRadius: 4,
-    },
-    input: {
-        flex: 1,
-        padding: 16,
-        fontSize: 18,
     },
     button: {
         backgroundColor: '#0693F1',
@@ -308,6 +310,21 @@ const styles = StyleSheet.create({
     resultText: {
         fontSize: 18,
         marginBottom: 10,
+    },
+    historyItem: {
+        flexDirection: 'row',
+        flex: 1,
+        backgroundColor: 'white',
+        elevation: 4,
+        shadowOffset: {width: 0, height: 2},
+        shadowOpacity: 0.2,
+        shadowRadius: 4,
+        shadowColor: 'black',
+        borderRadius: 12,
+    },
+    historyText: {
+        fontSize: 24,
+        padding: 16,
     },
     clearButton: {
         backgroundColor: '#FF4B4C',
