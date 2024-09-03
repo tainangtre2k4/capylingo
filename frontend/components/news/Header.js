@@ -53,7 +53,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: width * 0.05, 
     backgroundColor: '#3DB2FF',
-    marginTop:10,
   },
   backButton: {
     height: width * 0.1, // 10% of screen width for circular button size

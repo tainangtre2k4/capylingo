@@ -56,7 +56,7 @@ const create = () => {
         search={false} 
         />
         {/* Image Picker*/}
-        <View className='p-3 items-center '>
+        <View className='p-3 items-center'>
         {!media ? (
         <View className="w-52 aspect-[3/4] rounded-lg bg-slate-300" />
       ) : mediaType === 'image' ? (
@@ -88,9 +88,9 @@ const create = () => {
         onChangeText={(newValue)=>{setCaption(newValue)}}
         placeholder='What is on your mind' className='w-full p-3'/>
 
-            <View className='w-full mt-40'>
-                <Button title='Share' onPress={createPost}/>
-            </View>
+        <View className='w-full mt-40 items-center bg-blue-200 p-4'>
+            <Button title='Share' onPress={createPost}/>
+        </View>
         </View>
     </View>
   )

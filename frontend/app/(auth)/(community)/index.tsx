@@ -1,17 +1,17 @@
-import { View, FlatList, Alert } from 'react-native';
+import { View, FlatList, Alert, TouchableOpacity, Text, StyleSheet } from 'react-native';
 import React, { useEffect, useState } from 'react';
-import posts from '../../../assets/data/posts.json';
 import Header from '@/components/news/Header';
-import PostListItem from '@/components/community/PostListItem'
+import PostListItem from '@/components/community/PostListItem';
 import { useRouter } from 'expo-router';
 import { supabase } from '@/lib/supabase';
-import { useUser } from '@clerk/clerk-expo'; // Clerk for authentication
+import { useUser } from '@clerk/clerk-expo';
+import { Ionicons } from '@expo/vector-icons'; // Import icon for Saved posts
 
 const FeedScreen = () => {
   const { user } = useUser(); // Get authenticated user from Clerk
-
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     fetchPosts();
@@ -31,14 +31,12 @@ const FeedScreen = () => {
     setLoading(false);
   };
 
-  const router = useRouter();
-
   const commentHandler = (post) => {
     router.push(`/comment?postId=${post.id}`);
   };
 
   return (
-    <View>
+    <View style={{ flex: 1 }}>
       <Header
         title='Community'
         backHandler={() => {}}
@@ -46,6 +44,18 @@ const FeedScreen = () => {
         search={false}
         create={true}
       />
+
+      {/* Navigation to Saved Posts */}
+      <View style={styles.savedPostsContainer}>
+        <TouchableOpacity style={styles.savedPostsButton} onPress={() => router.push('/saved-post')}>
+          <Ionicons name="bookmark-outline" size={24} color="white" />
+          <Text style={styles.savedPostsText}>Saved Posts</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.savedPostsButton} onPress={() => router.push('/my-post')}>
+          <Ionicons name="document-outline" size={24} color="white" />
+          <Text style={styles.savedPostsText}>My Posts</Text>
+        </TouchableOpacity>
+      </View>
 
       <FlatList
         data={posts}
@@ -63,5 +73,29 @@ const FeedScreen = () => {
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  savedPostsContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: 5,
+    justifyContent: 'space-around',
+    backgroundColor:'white',
+  },
+  savedPostsButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FF2442',
+    padding: 10,
+    borderRadius: 16,
+    width: 150,
+    justifyContent:'center'
+  },
+  savedPostsText: {
+    color: 'white',
+    marginLeft: 10,
+    fontWeight: 'bold',
+  },
+});
 
 export default FeedScreen;

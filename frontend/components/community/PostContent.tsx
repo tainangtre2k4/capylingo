@@ -5,14 +5,16 @@ import { focusOn } from "@cloudinary/url-gen/qualifiers/gravity";
 import { FocusOn } from "@cloudinary/url-gen/qualifiers/focusOn";
 import { AdvancedImage } from "cloudinary-react-native";
 import {Video,ResizeMode} from 'expo-av'
+import { fit } from "@cloudinary/url-gen/actions/resize";
+
 export default function PostContent ({post}){
     const {width}= useWindowDimensions();
 
     if (post.media_type=='image'){
         const image = cld.image(post.image);
-        image.resize(thumbnail().width(width).height(width))
+        image.resize(fit().height(width+10).aspectRatio("1.0"))
         return (
-        <AdvancedImage cldImg={image} className='w-full aspect-[4/3]' />
+        <AdvancedImage cldImg={image} className='w-full aspect-[6/3]' />
         )
     }
     if (post.media_type=='video'){

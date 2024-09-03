@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, TextInput, Button, Alert, ActivityIndicator } from 'react-native';
-import { useRouter, useLocalSearchParams } from 'expo-router';
+import { useRouter, useLocalSearchParams, Stack } from 'expo-router';
 import { supabase } from '@/lib/supabase';
 import { useUser } from '@clerk/clerk-expo';
 import Header from '@/components/news/Header';
@@ -98,31 +98,35 @@ const CommentScreen: React.FC = () => {
     setLoading(false);
   };
 
+
+  
   return (
     <View style={{ flex: 1 }}>
-      <Header 
-        title='Comments' 
-        backHandler={() => { router.back() }}
-        search={false} 
+      <Stack.Screen 
+        options={{
+          headerShown:true,
+          headerTitle:'Comments',
+          headerBackTitleVisible: false,
+        }}
       />
       
       {loadingPost ? (
-        <ActivityIndicator size="large" color="#0000ff" />
+        <ActivityIndicator size="large" color='#3DB2FF' />
       ) : post ? (
         <PostListItem post={post} commentHandler={() => {}} show={false}/> // Rendering PostListItem with the post data
       ) : (
         <Text style={{ padding: 16 }}>Post not found</Text>
       )}
-
-      <View>
-        <Text className='text-2xl font-semibold'>Comments</Text>
+      
+      <View className='bg-white ml-5'>
+        <Text className='text-2xl font-bold'>Comments</Text>
       </View>
 
       <FlatList
         data={comments}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
-          <View style={{ padding: 8, borderWidth: 1, borderBottomColor: '#ccc' }}>
+          <View style={{ padding: 8, borderWidth: 1, borderBottomColor: '#ccc',borderRadius: 16, margin: 6, }}>
             <Text style={{ fontWeight: 'bold' }}>{item.user.username}</Text>
             <Text>{item.content}</Text>
           </View>
@@ -130,7 +134,7 @@ const CommentScreen: React.FC = () => {
         ListEmptyComponent={<Text style={{ padding: 16 }}>No comments yet.</Text>}
         refreshing={loading}
         onRefresh={fetchComments}
-        contentContainerStyle={{ flexGrow: 1, paddingBottom: 16 }}
+        contentContainerStyle={{ flexGrow: 1, paddingBottom: 16,backgroundColor:'white' }}
       />
 
       <View style={{ flexDirection: 'row', alignItems: 'center', padding: 16 }}>

@@ -1,20 +1,21 @@
-import { View, Text  } from 'react-native'
-import {Ionicons,Feather,AntDesign} from '@expo/vector-icons'
+import React, { useEffect, useState } from 'react';
+import { View, Text, TouchableOpacity } from 'react-native';
+import { Ionicons, Feather, AntDesign } from '@expo/vector-icons';
 import { AdvancedImage } from 'cloudinary-react-native';
 import { cld } from '@/lib/cloudinary';
 import { thumbnail } from "@cloudinary/url-gen/actions/resize";
 import { focusOn } from "@cloudinary/url-gen/qualifiers/gravity";
 import { FocusOn } from "@cloudinary/url-gen/qualifiers/focusOn";
-import {Video,ResizeMode} from 'expo-av'
-import PostContent from './PostContent';
-import { useEffect, useState } from 'react';
-import { useUser } from '@clerk/clerk-expo'; // Clerk for authentication
+import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage
 import { supabase } from '@/lib/supabase';
+import { useUser } from '@clerk/clerk-expo';
+import PostContent from './PostContent';
 
-export default function PostListItem({ post, commentHandler,show=true }) {
-  const { user } = useUser(); // Get authenticated user from Clerk
+export default function PostListItem({ post, commentHandler, show = true }) {
+  const { user } = useUser();
   const [isLiked, setIsLiked] = useState(false);
   const [likeRecord, setLikeRecord] = useState(null);
+  const [isSaved, setIsSaved] = useState(false); // State for bookmark
 
   useEffect(() => {
     if (post.my_likes.length > 0) {
@@ -28,6 +29,39 @@ export default function PostListItem({ post, commentHandler,show=true }) {
       saveLike();
     } else deleteLike();
   }, [isLiked]);
+
+  useEffect(() => {
+    checkIfSaved();
+  }, []);
+
+  const checkIfSaved = async () => {
+    try {
+      const savedPosts = await AsyncStorage.getItem('savedPosts');
+      const savedPostsArray = savedPosts ? JSON.parse(savedPosts) : [];
+      const isPostSaved = savedPostsArray.some(savedPost => savedPost.id === post.id);
+      setIsSaved(isPostSaved);
+    } catch (error) {
+      console.error('Error checking if post is saved:', error);
+    }
+  };
+
+  const toggleSave = async () => {
+    try {
+      const savedPosts = await AsyncStorage.getItem('savedPosts');
+      let savedPostsArray = savedPosts ? JSON.parse(savedPosts) : [];
+
+      if (isSaved) {
+        savedPostsArray = savedPostsArray.filter(savedPost => savedPost.id !== post.id);
+      } else {
+        savedPostsArray.push(post);
+      }
+
+      await AsyncStorage.setItem('savedPosts', JSON.stringify(savedPostsArray));
+      setIsSaved(!isSaved);
+    } catch (error) {
+      console.error('Error saving/removing post:', error);
+    }
+  };
 
   const saveLike = async () => {
     if (likeRecord) return;
@@ -72,18 +106,26 @@ export default function PostListItem({ post, commentHandler,show=true }) {
       <PostContent post={post} />
 
       {/* Icons */}
-      {show && <View className="flex-row gap-3 p-3">
-        <AntDesign
-          onPress={() => setIsLiked(!isLiked)}
-          name={isLiked ? "heart" : "hearto"}
-          size={20}
-          color={isLiked ? 'crimson' : 'black'}
-        />
-        <Ionicons onPress={() => commentHandler(post)} name="chatbubble-outline" size={20} />
-        <Feather name="send" size={20} />
-
-        <Feather name="bookmark" size={20} className="ml-auto" />
-      </View>}
+      {show && (
+        <View className="flex-row gap-3 p-3">
+          <AntDesign
+            onPress={() => setIsLiked(!isLiked)}
+            name={isLiked ? "heart" : "hearto"}
+            size={20}
+            color={isLiked ? 'crimson' : 'black'}
+          />
+          <Ionicons onPress={() => commentHandler(post)} name="chatbubble-outline" size={20} />
+          <Feather name="send" size={20} />
+          <TouchableOpacity onPress={toggleSave}>
+            <Feather
+              name="bookmark"
+              size={20}
+              color={isSaved ? 'crimson' : 'black'} // Change color based on saved status
+              className="ml-auto"
+            />
+          </TouchableOpacity>
+        </View>
+      )}
 
       <View className='px-3 gap-1'>
         {show && <Text className='font-semibold'>{post.likesPost?.[0]?.count || 0} likes</Text>}
