@@ -23,10 +23,12 @@ export default function NewsSection({ newsProps }) {
   }
 
   useEffect(() => {
-    const urls = newsProps.map((item) => item.url);
-    setUrlList(urls);
+    if (Array.isArray(newsProps) && newsProps.length > 0) {  // Check if newsProps is an array and has elements
+      const urls = newsProps.map((item) => item.url);
+      setUrlList(urls);
+    }
   }, [newsProps]);
-
+  
   const handleClick = (item) => {
     router.push({
       pathname: "/details",

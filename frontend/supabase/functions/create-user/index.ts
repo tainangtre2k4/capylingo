@@ -12,19 +12,18 @@ serve(async (req: Request) => {
   }
 
   try {
-    const { id, email_addresses, first_name, image_url,last_name } = (await req.json()).data;
+    const { id, email_addresses, first_name,last_name } = (await req.json()).data;
     const email = email_addresses[0].email_address;
     const insertPayload = {
       id,
       email,
-      avatar_url: image_url,
       first_name,
       last_name,
     };
     console.log('Insert Payload:', insertPayload);
     const { data, error } = await supabase
       .from('users')
-      .insert(insertPayload);
+      .insert()
     if (error) {
       return new Response(JSON.stringify(error), { status: 400 });
     }

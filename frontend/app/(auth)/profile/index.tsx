@@ -10,7 +10,7 @@ export default function Index() {
   const numberOfNewAchievement = 2; // Example value, replace with actual state or props
   const actionNeeded = true; // Example value, replace with actual state or props
   const ChangeInformationHandler = () => {
-    router.push('/changeInformation')
+    router.push('/profile/changeInformation')
   }
   const logOutHandler = () => {
     signOut();

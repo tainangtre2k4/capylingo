@@ -8,13 +8,13 @@ import {
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useColorScheme } from "nativewind";
-import Loading from "../components/news/Loading";
+import Loading from '@/components/news/Loading';
 import { useQuery } from "@tanstack/react-query";
-import { categories } from "../constants/Colors";
-import CategoriesCard from "../components/news/CategoriesCard";
-import NewsSection from "../components/news/NewsSection";
+import { categories } from "../../../constants/Colors";
+import CategoriesCard from "../../../components/news/CategoriesCard";
+import NewsSection from "../../../components/news/NewsSection";
 import { MagnifyingGlassIcon } from "react-native-heroicons/outline";
-import { fetchDiscoverNews } from "../utils/NewsApi";
+import { fetchDiscoverNews } from "../../../utils/NewsApi";
 import { heightPercentageToDP as hp } from "react-native-responsive-screen";
 import { router, useRouter } from "expo-router";
 import Header from "@/components/news/Header";

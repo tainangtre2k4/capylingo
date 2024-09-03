@@ -9,9 +9,9 @@ import {
 import React, { useCallback, useState } from "react";
 import { useRouter } from "expo-router";
 import { XMarkIcon } from "react-native-heroicons/outline";
-import { fetchSearchNews } from "../utils/NewsApi";
+import { fetchSearchNews } from "../../../utils/NewsApi";
 import { debounce } from 'lodash';
-import NewsSection from "../components/news/NewsSection";
+import NewsSection from "../../../components/news/NewsSection";
 import { heightPercentageToDP as hp } from "react-native-responsive-screen";
 import Header from "@/components/news/Header";
 

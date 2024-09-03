@@ -1,13 +1,13 @@
 import { Text, TouchableOpacity, View, StyleSheet, Image, Dimensions } from "react-native";
 import React from "react";
-import { MagnifyingGlassIcon } from "react-native-heroicons/outline";
+import { MagnifyingGlassIcon,PlusIcon} from "react-native-heroicons/outline";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
 
 // Get screen dimensions
 const { width } = Dimensions.get('window');
 
-export default function Header({ backHandler,title }) {
+export default function Header({ backHandler,title,search=true,create=false,navigateHandler=()=>{} }) {
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
@@ -22,13 +22,22 @@ export default function Header({ backHandler,title }) {
         {/* Title */}
         <Text style={styles.title}>{title}</Text>
 
-        {/* Search Button */}
-        <TouchableOpacity
-          onPress={() => router.push("/search")}
-          style={styles.searchButton}
-        >
-          <MagnifyingGlassIcon size={25} strokeWidth={2} color="black" />
-        </TouchableOpacity>
+        {search && (
+          <TouchableOpacity
+            onPress={() => router.push("/search")}
+            style={styles.searchButton}
+          >
+            <MagnifyingGlassIcon size={25} strokeWidth={2} color="black" />
+          </TouchableOpacity>
+        )}
+
+        {create && (
+          <TouchableOpacity
+          onPress={navigateHandler}
+          style={styles.searchButton}>
+          <PlusIcon size={25} strokeWidth={2} color="black" />
+          </TouchableOpacity>
+        )}
       </View>
     </SafeAreaView>
   );
@@ -44,7 +53,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: width * 0.05, 
     backgroundColor: '#3DB2FF',
-    marginTop:10,
   },
   backButton: {
     height: width * 0.1, // 10% of screen width for circular button size
