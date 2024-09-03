@@ -1,6 +1,6 @@
 import { Tabs } from 'expo-router';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
-import { Pressable } from 'react-native';
+import {Pressable, SafeAreaView} from 'react-native';
 import { useAuth } from '@clerk/clerk-expo';
 import React, {useEffect} from 'react';
 import { StatusBar } from 'expo-status-bar'
@@ -27,7 +27,7 @@ const TabsPage = () => {
 
   const page = segment.join('/')
 
-  const pagesToHideTabBar = ['vocabulary/type1', 'skillcheck/reading']
+  const pagesToHideTabBar = ['vocabulary/type1', 'skillcheck/reading', "skillcheck/listening"]
 
   const checkPageToHideTabBar = (): boolean => {
     for (const s of pagesToHideTabBar)
@@ -45,7 +45,7 @@ const TabsPage = () => {
   }, []);
 
   return (
-    <>
+    <SafeAreaView style={{flex: 1}}>
       <StatusBar style='light' backgroundColor='#3DB2FF' />
       <Tabs
         screenOptions={{
@@ -68,6 +68,15 @@ const TabsPage = () => {
           }}
           redirect={!isSignedIn}
         />
+      <Tabs.Screen
+          name="dictionary"
+          options={{
+              tabBarIcon: ({ color, size }) => <Ionicons name="file-tray-full" size={size} color={color} />,
+              tabBarLabel: 'Dictionary',
+              headerShown: false,
+          }}
+          redirect={!isSignedIn}
+        />
         <Tabs.Screen
           name="resources"
           options={{
@@ -79,24 +88,17 @@ const TabsPage = () => {
           redirect={!isSignedIn}
         />
         <Tabs.Screen
-          name="(profile)"
+          name="profile"
           options={{
-            headerShown: false,
+            headerTitle: 'My Profile',
             tabBarIcon: ({ color, size }) => <Ionicons name="person-outline" size={size} color={color} />,
             tabBarLabel: 'My Profile',
+            headerRight: () => <LogoutButton />,
           }}
           redirect={!isSignedIn}
         />
-        <Tabs.Screen
-          name="(news)"
-          options={{
-            headerShown: false,
-            tabBarLabel: 'News',
-          }}
-          redirect={!isSignedIn}
-        />
-    </Tabs>
-    </>
+      </Tabs>
+    </SafeAreaView>
   );
 };
 

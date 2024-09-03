@@ -4,7 +4,7 @@ import { View, Text, StyleSheet, SafeAreaView, Image, Dimensions, TouchableOpaci
 import { useAuth } from '@clerk/clerk-expo';  
 
 const { width } = Dimensions.get('window');
-export default function Home() {
+export default function Index() {
   const { signOut } = useAuth();
   // Assume these variables are passed in as props or derived from state
   const numberOfNewAchievement = 2; // Example value, replace with actual state or props
