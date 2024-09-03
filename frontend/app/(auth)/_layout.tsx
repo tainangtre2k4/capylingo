@@ -97,6 +97,13 @@ const TabsPage = () => {
           }}
           redirect={!isSignedIn}
         />
+        <Tabs.Screen
+          name="(news)"
+          options={{
+            headerShown: false
+          }}
+          redirect={!isSignedIn}
+        />
       </Tabs>
     </SafeAreaView>
   );
