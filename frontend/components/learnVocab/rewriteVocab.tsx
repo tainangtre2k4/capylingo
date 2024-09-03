@@ -52,6 +52,7 @@ const RewriteVocab: React.FC<RewriteVocabProps> = ({ word, ipa, type, definition
               multiline={true}
               textAlignVertical="top"
               onChangeText={setInput}
+              editable={!showResult}
           />
 
           {showResult && (

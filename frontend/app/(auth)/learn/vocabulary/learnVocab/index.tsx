@@ -37,10 +37,8 @@ const LearnVocab = () => {
     return <Text>Sorry! Failed to load Vocabulary</Text>;
   }
 
-  const allVocabs = [...vocabs, ...incorrectVocabs];
-
   const goToNextVocab = () => {
-    if (currentIndex < allVocabs.length - 1) {
+    if (currentIndex < vocabs.length*2 + incorrectVocabs.length - 1) {
       const nextIndex = currentIndex + 1;
       setCurrentIndex(nextIndex);
       scrollViewRef.current?.scrollTo({
@@ -70,20 +68,18 @@ const LearnVocab = () => {
           scrollEventThrottle={32}
           showsHorizontalScrollIndicator={false}
           scrollEnabled = {false}
+          pagingEnabled
         >
-          {allVocabs.map((vocab, index) => {
-            const isIncorrect = incorrectVocabs.some(incVocab => incVocab.word === vocab.word);
-            return (
+          {vocabs.map((vocab, index) => (
             <View key={index} style={{ flexDirection: 'row' }}>
-              {!isIncorrect &&(
-                <Flashcard 
+              <Flashcard 
                 word={vocab.word} 
                 ipa={vocab.ipa} 
                 type={vocab.type} 
                 definition={vocab.definition} 
                 example={vocab.example}
                 onNext={goToNextVocab}
-              />)}
+              />
               <RewriteVocab 
                 word={vocab.word} 
                 ipa={vocab.ipa} 
@@ -94,13 +90,26 @@ const LearnVocab = () => {
                 onIncorrectAnswer={() => handleIncorrectAnswer(vocab)}
               />
             </View>
-          )})}
+          ))}
+          {/* Render các từ vựng sai */}
+          {incorrectVocabs.map((vocab, index) => (
+            <View key={`incorrect-${index}`} style={{ flexDirection: 'row' }}>
+              <RewriteVocab 
+                word={vocab.word} 
+                ipa={vocab.ipa} 
+                type={vocab.type} 
+                definition={vocab.definition} 
+                example={vocab.example} 
+                onNext={goToNextVocab}
+                onIncorrectAnswer={() => handleIncorrectAnswer(vocab)}
+              />
+            </View>
+          ))}
         </ScrollView>
       </View>
     </>
   );
 };
-
 
 const styles = StyleSheet.create({
   headerContainer: {
