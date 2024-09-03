@@ -12,7 +12,7 @@ import {
 import { useNavigation, router } from "expo-router";
 import React, { useContext, useEffect, useCallback, useRef, useMemo } from "react";
 import BackButton from "@/components/BackButton";
-import HeaderProgressTracker from "@/components/learn/HeaderProgressTracker";
+import HeaderProgressTracker from "@/components/HeaderProgressTracker";
 import { ReadingContext } from './_layout';
 import { RenderHTML } from "react-native-render-html";
 import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
