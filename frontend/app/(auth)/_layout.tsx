@@ -6,6 +6,7 @@ import React, {useEffect} from 'react';
 import { StatusBar } from 'expo-status-bar'
 import { useSegments } from "expo-router";
 import * as NavigationBar from 'expo-navigation-bar';
+import NotificationProvider from '@/src/providers/NotificationProvider';
 
 export const LogoutButton = () => {
   const { signOut } = useAuth();
@@ -45,7 +46,7 @@ const TabsPage = () => {
   }, []);
 
   return (
-    <>
+    <NotificationProvider>
       <StatusBar style='light' backgroundColor='#3DB2FF' />
       <Tabs
         screenOptions={{
@@ -104,7 +105,7 @@ const TabsPage = () => {
           redirect={!isSignedIn}
         />
     </Tabs>
-    </>
+    </NotificationProvider>
   );
 };
 

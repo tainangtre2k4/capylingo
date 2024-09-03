@@ -10,6 +10,7 @@ import PostContent from './PostContent';
 import { useEffect, useState } from 'react';
 import { useUser } from '@clerk/clerk-expo'; // Clerk for authentication
 import { supabase } from '@/lib/supabase';
+import { sendLikeNotification } from '@/utils/Notification';
 
 export default function PostListItem({post}){
     const { user } = useUser(); // Get authenticated user from Clerk
@@ -49,7 +50,7 @@ export default function PostListItem({post}){
         post_id: post.id,
       }]).select('*')
       if (error) console.log(error)
-     console.log(data)
+      sendLikeNotification(data[0])
       if (data)  {console.log(data[0]); setLikeRecord(data[0]);}
     }
 
