@@ -14,7 +14,7 @@ import {
 import React, {useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react'
 import {useNavigation} from 'expo-router'
 import BackButton from "@/components/BackButton";
-import HeaderProgressTracker from "@/components/learn/HeaderProgressTracker";
+import HeaderProgressTracker from "@/components/HeaderProgressTracker";
 import {RenderHTML} from 'react-native-render-html';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import {ListeningContext} from './_layout';

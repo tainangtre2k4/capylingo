@@ -12,7 +12,7 @@ import {
 import React, {useEffect, useState, useContext } from 'react'
 import {useNavigation, router} from 'expo-router'
 import BackButton from "@/components/BackButton";
-import HeaderProgressTracker from "@/components/learn/HeaderProgressTracker";
+import HeaderProgressTracker from "@/components/HeaderProgressTracker";
 import {RenderHTML} from 'react-native-render-html';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import {ReadingContext} from './_layout';

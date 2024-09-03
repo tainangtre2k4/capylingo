@@ -1,7 +1,7 @@
 import {Platform, StatusBar as RNStatusBar, StyleSheet, View} from 'react-native'
 import React, {useEffect} from 'react'
 import {useNavigation} from "expo-router";
-import HeaderProgressTracker from "@/components/learn/HeaderProgressTracker";
+import HeaderProgressTracker from "@/components/HeaderProgressTracker";
 import {StatusBar} from "expo-status-bar";
 import BackButton from "@/components/BackButton";
 import ExType5 from '@/components/exercise/type5/type5';
