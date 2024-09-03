@@ -88,7 +88,7 @@ const TabsPage = () => {
           redirect={!isSignedIn}
         />
         <Tabs.Screen
-          name="(profile)"
+          name="profile"
           options={{
             headerShown: false,
             tabBarIcon: ({ color, size }) => <Ionicons name="person-outline" size={size} color={color} />,
@@ -96,14 +96,14 @@ const TabsPage = () => {
           }}
           redirect={!isSignedIn}
         />
-        <Tabs.Screen
+        {/* <Tabs.Screen
           name="(news)"
           options={{
             headerShown: false,
             tabBarLabel: 'News',
           }}
           redirect={!isSignedIn}
-        />
+        /> */}
         <Tabs.Screen
           name="(community)"
           options={{
