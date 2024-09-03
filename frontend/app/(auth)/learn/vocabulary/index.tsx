@@ -37,15 +37,15 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     header: {
-        paddingTop: RNStatusBar.currentHeight,
-        paddingHorizontal: width * .053,
-        height: (RNStatusBar.currentHeight || height * .042) + height * .1,
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        marginTop: (RNStatusBar.currentHeight || 20),
         backgroundColor: '#3DB2FF',
         alignItems: 'center',
         flexDirection: 'row'
     },
     title: {
-        marginHorizontal: width * .03,
+        marginHorizontal: 20,
         color: 'white',
         fontSize: 24,
         fontWeight: '500'
