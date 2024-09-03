@@ -33,6 +33,10 @@
           "photosPermission": "The app accesses your photos to let you share them with your friends."
         }
       ]
-    ]
+    ],
+    "androidStatusBar": {
+      "backgroundColor": "#ffffff",
+      "translucent": false
+    }
   }
 }
