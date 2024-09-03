@@ -13,6 +13,25 @@ import { supabase } from '../../../lib/supabase';
 //     },
 //   });
 // };
+
+export const useVocabList = (topicID) => {
+  return useQuery({
+    queryKey: ['Vocab', topicID],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('Vocab')
+        .select('*')
+        .eq('TopicId', topicID);
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      return data
+    },
+  });
+};
+
 export const useVocabExType2List = (topicID) => {
   return useQuery({
     queryKey: ['VocabExType2', topicID],

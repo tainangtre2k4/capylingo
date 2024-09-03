@@ -43,7 +43,7 @@ const InitialLayout = () => {
     console.log('User changed: ', isSignedIn);
 
     if (isSignedIn && !inTabsGroup) {
-      router.replace('/learn');
+      router.replace('/learn/vocabulary/learnVocab/');
     } else if (!isSignedIn) {
       router.replace('/login');
     }

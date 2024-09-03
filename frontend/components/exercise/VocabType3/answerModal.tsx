@@ -50,6 +50,7 @@ const AnswerModal: React.FC<ModalProps> = ({ visible, onClose, leftColumn, right
               keyExtractor={(item) => item.index.toString()}
               contentContainerStyle={{ alignItems: 'center' }}
               style={{ flex: 1 }}
+              showsVerticalScrollIndicator={false}
             />
             <FlatList
               data={sortedRightColumn}
@@ -57,6 +58,7 @@ const AnswerModal: React.FC<ModalProps> = ({ visible, onClose, leftColumn, right
               keyExtractor={(item) => item?.index.toString()}
               contentContainerStyle={{ alignItems: 'center' }}
               style={{ flex: 1 }}
+              showsVerticalScrollIndicator={false}
             />
           </View>
 
