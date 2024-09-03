@@ -7,32 +7,35 @@ import Button from '@/components/community/button'
 import {uploadImage } from '@/lib/cloudinary'
 import { supabase } from '@/lib/supabase'
 import { useUser } from '@clerk/clerk-expo'; // Clerk for authentication
+import {Video,ResizeMode} from 'expo-av'
 const create = () => {
     const { user } = useUser();
     const [caption,setCaption] = useState('');
-    const [image, setImage] = useState<string | null>(null);
+    const [media, setMedia] = useState<string | null>(null);
+    const [mediaType, setMediaType] = useState<'video' | 'image' | undefined>();
     const router = useRouter();
-    const pickImage = async () => {
+    const pickMedia = async () => {
         // No permissions request is necessary for launching the image library
         let result = await ImagePicker.launchImageLibraryAsync({
-          mediaTypes: ImagePicker.MediaTypeOptions.Images,
+          mediaTypes: ImagePicker.MediaTypeOptions.All,
           allowsEditing: true,
           aspect: [4, 3],
           quality: 0.5,
         });
     
         if (!result.canceled) {
-          setImage(result.assets[0].uri);
+            setMedia(result.assets[0].uri);
+            setMediaType(result.assets[0].type);
         }
     };
     useEffect(()=>{
-        if (!image) pickImage();
-    },[image])
+        if (!media) pickMedia();
+    },[media])
 
 
     const createPost = async () => {
-        if (!image) return
-        const response = await uploadImage(image);
+        if (!media) return
+        const response = await uploadImage(media);
         console.log(response?.public_id)
         
         const { data, error } = await supabase
@@ -40,7 +43,8 @@ const create = () => {
         .insert([{
             caption,
             image: response?.public_id,
-            user_id: user?.id 
+            user_id: user?.id,
+            media_type: mediaType
         }])
         .select();
         router.back();
@@ -53,13 +57,29 @@ const create = () => {
         />
         {/* Image Picker*/}
         <View className='p-3 items-center '>
-            {image ? (<Image
-            source={{
-                uri: image,
-            }}
-            className='w-52 aspect-[3/4] rounded-lg bg-slate-300'
-            />) : (<View className='w-52 aspect-[3/4] rounded-lg bg-slate-300'/>)}
-            <Text onPress={pickImage} className='text-blue-500 font-semibold m-5'>Change</Text>
+        {!media ? (
+        <View className="w-52 aspect-[3/4] rounded-lg bg-slate-300" />
+      ) : mediaType === 'image' ? (
+        <Image
+          source={{ uri: media }}
+          className="w-52 aspect-[3/4] rounded-lg bg-slate-300"
+        />
+      ) : (
+        <Video
+          className="w-52 aspect-[3/4] rounded-lg bg-slate-300"
+          style={{ width: '100%', aspectRatio: 16 / 9 }}
+          source={{
+            uri: media,
+          }}
+          useNativeControls
+          resizeMode={ResizeMode.CONTAIN}
+          isLooping
+          shouldPlay
+        />
+      )}
+
+            
+            <Text onPress={pickMedia} className='text-blue-500 font-semibold m-5'>Change</Text>
         
         
         {/* Caption*/}

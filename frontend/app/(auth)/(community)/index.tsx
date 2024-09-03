@@ -5,21 +5,32 @@ import Header from '@/components/news/Header';
 import PostListItem from '@/components/community/PostListItem';
 import { useRouter } from 'expo-router';
 import { supabase } from '@/lib/supabase';
+import { useUser } from '@clerk/clerk-expo'; // Clerk for authentication
+
 const FeedScreen = () => {
+  const { user } = useUser(); // Get authenticated user from Clerk
+
   const [posts,setPosts] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(()=>{
     fetchPosts();
   },[])
 
   const fetchPosts = async () =>{
+    setLoading(true);
     let { data, error } = await supabase
     .from('posts')
-    .select('*,user:users(*)')  
+    .select('*,user:users(*),my_likes:likesPost(*),likesPost(count)') 
+    .eq('my_likes.user_id', user?.id) 
     if (error) {
       Alert.alert("Something went Wrong !")
     }
-    setPosts(data);
+    console.log(data)
+    const sortedPosts = data.sort((a, b) => b.id - a.id);
+    setPosts(sortedPosts);
+    setLoading(false);
+
   }
 
   const router =useRouter();
@@ -33,13 +44,18 @@ const FeedScreen = () => {
       />
       
       <FlatList
-        data={posts}
-        className='items-cente'
-        contentContainerStyle={{gap: 10,width:'100%',maxWidth:512,alignSelf:'center'}}
-        renderItem={({item})=><PostListItem post={item}/>}
-        showsVerticalScrollIndicator = {false}
-      />
-
+      data={posts}
+      renderItem={({ item }) => <PostListItem post={item} />}
+      contentContainerStyle={{
+        gap: 10,
+        maxWidth: 512,
+        alignSelf: 'center',
+        width: '100%',
+      }}
+      showsVerticalScrollIndicator={false}
+      onRefresh={fetchPosts}
+      refreshing={loading}
+    />
       
     </View>
   )
