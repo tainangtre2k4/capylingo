@@ -4,8 +4,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import Header from '@/components/(news)/Header'
 import SearchBar from '@/components/(news)/SearchBar'
 import axios from 'axios'
-import { NewsDataType } from './types'
-import BreakingNews from '@/components/news/BreakingNews'
+import { NewsDataType } from '../../../constants/types'
+import BreakingNews from '@/components/(news)/BreakingNews'
 
 type Props = {}
 

@@ -1,7 +1,7 @@
 import { Animated, FlatList, StyleSheet, Text, useWindowDimensions, View, ViewToken } from 'react-native';
 import React, { useRef, useState, useEffect } from 'react';
 import { colors } from 'react-native-elements';
-import { NewsDataType } from '@/app/(auth)/(news)/types';
+import { NewsDataType } from '@/constants/types';
 import SliderItem from '@/components/(news)/SliderItem';
 import { scrollTo, useAnimatedRef, useAnimatedScrollHandler, useDerivedValue, useSharedValue } from 'react-native-reanimated';
 import Pagination from '@/components/(news)/Pagination';

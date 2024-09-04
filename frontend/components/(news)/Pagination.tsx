@@ -1,6 +1,6 @@
 import { Animated, StyleSheet, Text, View } from 'react-native'
 import React from 'react'
-import { NewsDataType } from '@/app/(auth)/(news)/types'
+import { NewsDataType } from '@/constants/types'
 import { SharedValue } from 'react-native-reanimated'
 import { colors } from 'react-native-elements'
 

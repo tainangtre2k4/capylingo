@@ -1,6 +1,6 @@
 import { Dimensions, StyleSheet, Text, View, Image, Animated } from 'react-native'
 import React from 'react'
-import { NewsDataType } from '@/app/(auth)/(news)/types'
+import { NewsDataType } from '@/constants/types'
 import { Extrapolation, interpolate, SharedValue, useAnimatedStyle } from 'react-native-reanimated'
 import { LinearGradient } from 'expo-linear-gradient'
 import { colors } from 'react-native-elements'
