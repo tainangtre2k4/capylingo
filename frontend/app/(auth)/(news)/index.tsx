@@ -25,7 +25,7 @@ const index = (props: Props) => {
 
   const getBreakingNews = async() => {
     try {
-      const URL = 'https://newsdata.io/api/1/news?apikey=pub_52598c53df161fd8e22d6d5e64f37f8410d13&language=en&image=1&removeduplicate=1&size=5'
+      const URL = 'https://newsdata.io/api/1/news?apikey=pub_52598c53df161fd8e22d6d5e64f37f8410d13&country=us&language=en&image=1&removeduplicate=1&size=5'
       const response = await axios .get(URL);
 
       //console.log("News Data: ", response.data);
@@ -43,7 +43,7 @@ const index = (props: Props) => {
       if (category.length !== 0){
         categoryString = `&category=${category}`
       }
-      const URL = `https://newsdata.io/api/1/news?apikey=pub_52598c53df161fd8e22d6d5e64f37f8410d13&language=en&image=1&removeduplicate=1&size=10${categoryString}`      
+      const URL = `https://newsdata.io/api/1/news?apikey=pub_52598c53df161fd8e22d6d5e64f37f8410d13&country=us&language=en&image=1&removeduplicate=1&size=10${categoryString}`      
       const response = await axios .get(URL);
 
       //console.log("News Data: ", response.data);

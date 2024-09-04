@@ -105,12 +105,15 @@
 //         fontWeight: '600'
 //     }
 // })
-import { Dimensions, StyleSheet, Text, View, Image, Animated } from 'react-native'
+import { Dimensions, StyleSheet, Text, View, Image, Animated, TouchableOpacity } from 'react-native'
 import React from 'react'
 import { NewsDataType } from '@/constants/types'
 import { Extrapolation, interpolate, SharedValue, useAnimatedStyle } from 'react-native-reanimated'
 import { LinearGradient } from 'expo-linear-gradient'
 import { colors } from 'react-native-elements'
+import { Link } from 'expo-router'
+import * as Linking from 'expo-linking';
+import * as WebBrowser from 'expo-web-browser';
 
 type Props = {
     slideItem: NewsDataType
@@ -120,8 +123,11 @@ type Props = {
 
 const {width} = Dimensions.get('screen')
 
+
 const SliderItem = ({slideItem, index, scrollX}: Props) => {
   return (
+    //<Link href={`/(news)/${slideItem.article_id}?url=${encodeURIComponent(slideItem.link)}`} asChild> 
+    <TouchableOpacity onPress={() => WebBrowser.openBrowserAsync(slideItem.link)}>
     <Animated.View 
         style = {[styles.itemWrapper]} 
         key ={slideItem.article_id}>
@@ -139,6 +145,8 @@ const SliderItem = ({slideItem, index, scrollX}: Props) => {
         <Text style = {styles.title} numberOfLines={2}> {slideItem.title} </Text>
       </LinearGradient>
     </Animated.View>
+    </TouchableOpacity>
+    //</Link>
   )
 }
 
