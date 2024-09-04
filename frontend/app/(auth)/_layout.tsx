@@ -112,6 +112,14 @@ const TabsPage = () => {
           }}
           redirect={!isSignedIn}
         />
+        <Tabs.Screen
+          name="chatbot"
+          options={{
+            headerShown: false,
+            tabBarLabel: 'Chatbot',
+          }}
+          redirect={!isSignedIn}
+        />
     </Tabs>
     </SafeAreaView>
   );
