@@ -1,4 +1,4 @@
-import { Platform, Text, StyleSheet, Dimensions, ScrollView, View, StatusBar as RNStatusBar } from 'react-native';
+import { Platform, Image, Modal, TouchableOpacity, Text, StyleSheet, Dimensions, ScrollView, View, StatusBar as RNStatusBar } from 'react-native';
 import React, { useEffect, useState, useRef } from 'react';
 import { useNavigation } from "expo-router";
 import ProgressTracker from '@/components/ProgressTracker';
@@ -11,7 +11,7 @@ import ExVocabType2 from '@/components/exercise/VocabType2/VocabType2';
 import ExVocabType3 from '@/components/exercise/VocabType3/VocabType3';
 
 
-const { width } = Dimensions.get('screen');
+const { width, height } = Dimensions.get('screen');
 
 const topicID = 1;
 
@@ -20,6 +20,7 @@ const VocabExercises = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [numberCorrectAnswers, setNumberCorrectAnswers] = useState(0);
   const [numberIncorrectAnswers, setNumberIncorrectAnswers] = useState(0);
+  const [isModalVisible, setModalVisible] = useState(false);
   const scrollViewRef = useRef<ScrollView>(null);
   const { data: vocabType1Exercises = [], isLoading: loadingType1, error: errorType1 } = useVocabExType1List(topicID);
   const { data: vocabType2Exercises = [], isLoading: loadingType2, error: errorType2 } = useVocabExType2List(topicID);
@@ -56,18 +57,37 @@ const VocabExercises = () => {
         x: nextIndex * width,
         animated: true,
       });
-    } else{
-      router.push({
-        pathname: './exercises/resultScreen',
-        params: {
-          correctAnswers: numberCorrectAnswers,
-          wrongAnswers: numberIncorrectAnswers,
-          totalQuestions: exerciseLength,
-        },
-      });
+    } else {
+      const totalAnswered = numberCorrectAnswers + numberIncorrectAnswers;
+      if (totalAnswered === exerciseLength) {
+        router.push({
+          pathname: './exercises/resultScreen',
+          params: {
+            correctAnswers: numberCorrectAnswers,
+            wrongAnswers: numberIncorrectAnswers,
+            totalQuestions: exerciseLength,
+          },
+        });
+      } else {
+        setModalVisible(true);
+      }
     }
   };
 
+  const handleModalSubmit = () => {
+    setModalVisible(false);
+    router.push({
+      pathname: './exercises/resultScreen',
+      params: {
+        correctAnswers: numberCorrectAnswers,
+        wrongAnswers: numberIncorrectAnswers,
+        totalQuestions: exerciseLength,
+      },
+    });
+  };
+  const handleModalCancel = () => {
+    setModalVisible(false);
+  };
 
   return (
     
@@ -127,6 +147,28 @@ const VocabExercises = () => {
             </View>
           ))}
         </ScrollView>
+
+        <Modal
+          visible={isModalVisible}
+          transparent
+          animationType="slide"
+          onRequestClose={handleModalCancel}
+        >
+          <View style={styles.modalContainer}>
+            <View style={styles.modalContent}>
+              <Image source={require('@/assets/images/capyDecoreBox.png')} style={styles.capyModal} />
+              <Text style={styles.modalText}>You haven't completed all the questions. Are you sure you want to submit?</Text>
+              <View style={styles.modalButtons}>
+                <TouchableOpacity onPress={handleModalCancel} style={styles.modalButtonCancel}>
+                  <Text style={styles.modalButtonText}>Cancel</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={handleModalSubmit} style={styles.modalButtonSubmit}>
+                  <Text style={styles.modalButtonText}>Submit</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </Modal>
       </View>
     </>
   );
@@ -152,6 +194,58 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     backgroundColor: 'white',
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.5)',
+  },
+  capyModal: {
+    width: width*0.14,
+    height: width*0.14,
+    resizeMode: 'contain',
+    position: 'absolute',
+    top: -0.08*width,
+    right: -2,
+  },
+  modalContent: {
+    width: '82%',
+    padding: 0.066*width,
+    backgroundColor: 'white',
+    borderRadius: 0.04*width,
+    alignItems: 'center',
+  },
+  modalText: {
+    fontSize: 20,
+    marginBottom: height*0.025,
+    textAlign: 'center',
+  },
+  modalButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+  },
+  modalButtonCancel: {
+    backgroundColor: '#A9A9A9',
+    padding: 0.026*width,
+    borderRadius: 0.026*width,
+    flex: 1,
+    marginRight: 0.026*width,
+    alignItems: 'center',
+  },
+  modalButtonSubmit: {
+    backgroundColor: '#4095F1',
+    padding: 0.026*width,
+    borderRadius: 0.026*width,
+    flex: 1,
+    marginLeft: 0.026*width,
+    alignItems: 'center',
+  },
+  modalButtonText: {
+    color: 'white',
+    fontWeight: '700',
+    fontSize: 17,
   },
 });
 
