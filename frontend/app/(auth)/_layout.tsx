@@ -1,11 +1,12 @@
 import { Tabs } from 'expo-router';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
-import {Pressable, SafeAreaView} from 'react-native';
+import {Pressable} from 'react-native';
 import { useAuth } from '@clerk/clerk-expo';
 import React, {useEffect} from 'react';
 import { StatusBar } from 'expo-status-bar'
 import { useSegments } from "expo-router";
 import * as NavigationBar from 'expo-navigation-bar';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export const LogoutButton = () => {
   const { signOut } = useAuth();
@@ -45,7 +46,7 @@ const TabsPage = () => {
   }, []);
 
   return (
-    <SafeAreaView style={{flex: 1}}>
+    <SafeAreaView style={{flex: 1}} edges={['right', 'bottom', 'left']}>
       <StatusBar style='light' backgroundColor='#3DB2FF' />
       <Tabs
         screenOptions={{

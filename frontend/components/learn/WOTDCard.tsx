@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
     ActivityIndicator,
     Dimensions,
@@ -10,6 +10,8 @@ import {
     View,
 } from 'react-native';
 import {Ionicons} from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {generate} from "random-words";
 
 type Meaning = {
     partOfSpeech: string;
@@ -22,34 +24,95 @@ type WordData = {
     meanings: Meaning[];
 };
 
-const WOTDCard = ({word}: { word: string }) => {
+const STORAGE_KEYS = {
+    word: '@word_of_the_day',
+    date: '@word_of_the_day_date',
+};
+
+const FALLBACK_WORD = 'apple';
+
+const WOTDCard = () => {
     const [modalVisible, setModalVisible] = useState(false);
     const [data, setData] = useState<WordData | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
+    const [wordOfTheDay, setWordOfTheDay] = useState('');
 
-    const fetchWordData = async () => {
-        if (!word.trim()) return;
-
-        setLoading(true);
-        const url = `https://api.dictionaryapi.dev/api/v2/entries/en/${word}`;
-
+    const getWordOfTheDay = async () => {
         try {
-            const response = await fetch(url);
-            const fetchedData = await response.json();
+            const storedWord = await AsyncStorage.getItem(STORAGE_KEYS.word);
+            const storedDate = await AsyncStorage.getItem(STORAGE_KEYS.date);
+            const today = new Date().toDateString();
 
-            if (response.status === 200) {
-                setData(fetchedData[0]);
-                setError(null);
+            if (storedWord && storedDate === today) {
+                // Return the stored word if it's the same day
+                return storedWord;
             } else {
-                setError('Word not found in the database');
+                // Generate a new word and store it with today's date
+                const newWord = generate()[0];
+                await AsyncStorage.setItem(STORAGE_KEYS.word, newWord);
+                await AsyncStorage.setItem(STORAGE_KEYS.date, today);
+                return newWord;
             }
         } catch (error) {
-            console.error('Error fetching data:', error);
-            setError('An error occurred while fetching data');
-        } finally {
-            setLoading(false);
+            console.error('Failed to fetch or set word of the day', error);
+            return FALLBACK_WORD; // Fallback word in case of error
         }
+    };
+
+    useEffect(() => {
+        const fetchWord = async () => {
+            const word = await getWordOfTheDay();
+            setWordOfTheDay(word);
+        };
+
+        fetchWord();
+
+        // Set a timeout to reset the word at midnight
+        const now = new Date();
+        const midnight = new Date();
+        midnight.setHours(24, 0, 0, 0);
+        const timeUntilMidnight = midnight.getTime() - now.getTime();
+
+        const timer = setTimeout(fetchWord, timeUntilMidnight);
+
+        return () => clearTimeout(timer);
+    }, []);
+
+    const fetchWordData = async () => {
+        if (!wordOfTheDay.trim()) return;
+
+        setLoading(true);
+        let word = wordOfTheDay;
+        const startTime = Date.now();
+        const timeout = 3000; // 3 seconds timeout
+
+        while (Date.now() - startTime < timeout) {
+            try {
+                const url = `https://api.dictionaryapi.dev/api/v2/entries/en/${word}`;
+                const response = await fetch(url);
+                const fetchedData = await response.json();
+
+                if (response.status === 200) {
+                    setData(fetchedData[0]);
+                    setError(null);
+                    return; // Exit loop if a valid word is found
+                } else {
+                    word = generate()[0]; // Generate a new random word
+                    setWordOfTheDay(word);
+                    await AsyncStorage.setItem(STORAGE_KEYS.word, word);
+                }
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                setError('An error occurred while fetching data');
+                break; // Exit loop on fetch error
+            }
+        }
+
+        // Fallback to 'apple' if timeout reached or persistent errors occur
+        setWordOfTheDay(FALLBACK_WORD);
+        setError('Word not found, fallback to default word.');
+        setLoading(false);
     };
 
     const handleOpenModal = () => {
@@ -73,7 +136,7 @@ const WOTDCard = ({word}: { word: string }) => {
                     <Text style={styles.title}>Word of the day</Text>
                     <View style={styles.wordContainer}>
                         <View>
-                            <Text style={styles.label}>{word}</Text>
+                            <Text style={styles.label}>{wordOfTheDay}</Text>
                             <Text style={styles.text}>Time to review!</Text>
                         </View>
                         <View style={styles.buttonContainer}>

@@ -61,9 +61,7 @@ const DictionaryStack = () => {
 
     return (
         <DictionaryContext.Provider value={{ history, favorite, setHistory, setFavorite }}>
-            <SafeAreaView style={{ flex: 1 }}>
-                <Stack screenOptions={{ animation: 'none' }} />
-            </SafeAreaView>
+            <Stack screenOptions={{ animation: 'none' }} />
         </DictionaryContext.Provider>
     );
 };
