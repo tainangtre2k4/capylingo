@@ -32,6 +32,33 @@ export const useVocabList = (topicID) => {
   });
 };
 
+export const useVocabExType1List = (topicID) => {
+  return useQuery({
+    queryKey: ['VocabExType1', topicID],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('VocabExType1')
+        .select('*')
+        .eq('TopicId', topicID);
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      return data.map((item) => ({
+        questionImage: item.ImageUrl,
+        correctAnswerIndex: item.solution,
+        answers: [
+          item.choice1,
+          item.choice2,
+          item.choice3,
+          item.choice4,
+        ],
+      }));
+    },
+  });
+};
+
 export const useVocabExType2List = (topicID) => {
   return useQuery({
     queryKey: ['VocabExType2', topicID],

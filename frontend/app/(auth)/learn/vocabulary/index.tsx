@@ -10,6 +10,7 @@ const VocabularyLesson = () => {
 
   useEffect(() => {
     navigation.setOptions({
+      headerShown: true,
       header: () => (
         <View style={styles.header}>
           <BackButton/>

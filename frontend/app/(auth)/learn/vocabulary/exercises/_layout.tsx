@@ -4,12 +4,12 @@ import { Stack } from 'expo-router'
 import HeaderProgressTracker from "@/components/learn/HeaderProgressTracker";
 import {StatusBar} from 'expo-status-bar';
 
-const VocabularyStack = () => {
+const ExercisesStack = () => {
   return (  
     <SafeAreaView style={{flex: 1, backgroundColor: '#fff'}}>
-      <Stack screenOptions={{headerShown: false}}/>
+      <Stack screenOptions={{ headerShown: false }}/>
     </SafeAreaView>  
   )
 }
 
-export default VocabularyStack
+export default ExercisesStack

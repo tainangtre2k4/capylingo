@@ -12,8 +12,10 @@ interface VocabType2Props {
   correctAnswerIndex: number;
   answers: string[];
   onNext: () => void;
+  onCorrectAnswer: () => void;
+  onIncorrectAnswer: () => void;
 }
-const VocabType2: React.FC<VocabType2Props> = ({ question, correctAnswerIndex, answers, onNext }) => {
+const VocabType2: React.FC<VocabType2Props> = ({ question, correctAnswerIndex, answers, onNext, onCorrectAnswer, onIncorrectAnswer }) => {
   
   const [userAnswer, setUserAnswer] = useState<number | null>(null);
   const [result, setResult] = useState<'correct' | 'incorrect' | null>(null);
@@ -22,8 +24,10 @@ const VocabType2: React.FC<VocabType2Props> = ({ question, correctAnswerIndex, a
   const checkAnswer = () => {
     if (userAnswer === correctAnswerIndex) {
         setResult('correct');
+        onCorrectAnswer();
       } else {
         setResult('incorrect');
+        onIncorrectAnswer();
       }
       setTimeout(() => {
         setShowCorrectAnswer(true);

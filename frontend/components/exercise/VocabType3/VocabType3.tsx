@@ -33,8 +33,10 @@ interface VocabType3Props {
   question: string;
   synonyms: string[][];
   onNext: () => void;
+  onCorrectAnswer: () => void;
+  onIncorrectAnswer: () => void;
 }
-const VocabType3: React.FC<VocabType3Props> = ({ question, synonyms, onNext })  => {
+const VocabType3: React.FC<VocabType3Props> = ({ question, synonyms, onNext, onCorrectAnswer, onIncorrectAnswer })  => {
   // const question = 'Matching synonyms ';
   // const synonyms = [
   //   ['Happy', 'Joyful'],
@@ -107,8 +109,10 @@ const VocabType3: React.FC<VocabType3Props> = ({ question, synonyms, onNext })  
 
     if (results.every(result => result === true)){
         setResult('correct');
+        onCorrectAnswer();
     } else {
          setResult('incorrect');
+         onIncorrectAnswer();
       }
   };
   

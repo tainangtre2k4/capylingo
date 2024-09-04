@@ -8,19 +8,17 @@ import ResultContent from './resultContent';
 
 interface Type1Props {
   onNext: () => void;
+  onCorrectAnswer: () => void;
+  onIncorrectAnswer: () => void;
+  questionImageUrl: string;
+  correctAnswerIndex: number;
+  answers: string[];
 }
 
-const type4: React.FC<Type1Props> = ({ onNext })  => {
+
+const ExVocabType1: React.FC<Type1Props> = ({ onNext, questionImageUrl, correctAnswerIndex, answers, onCorrectAnswer, onIncorrectAnswer})  => {
 
   const question = "What does the picture mean?";
-  const questionImage = require('@/assets/images/nose.png');
-  const correctAnswerIndex = 2;
-  const answers = [
-    'hair',
-    'eyes',
-    'nose',
-    'leg',
-  ];
 
   
   const [userAnswer, setUserAnswer] = useState<number | null>(null);
@@ -29,8 +27,10 @@ const type4: React.FC<Type1Props> = ({ onNext })  => {
   const checkAnswer = () => {
     if (userAnswer === correctAnswerIndex) {
         setResult('correct');
+        onCorrectAnswer();
       } else {
         setResult('incorrect');
+        onIncorrectAnswer();
       }
   };
 
@@ -38,7 +38,7 @@ const type4: React.FC<Type1Props> = ({ onNext })  => {
     <View style={sharedStyles.container}>
         <QuestionText question={question} />
         <Image
-            source={questionImage}
+             source={{ uri: questionImageUrl }}
             style={sharedStyles.imageQuestion}
         />
 
@@ -75,4 +75,4 @@ const type4: React.FC<Type1Props> = ({ onNext })  => {
   );
 };
 
-export default type4;
+export default ExVocabType1;

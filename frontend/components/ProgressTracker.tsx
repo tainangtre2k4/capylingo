@@ -37,7 +37,7 @@ const ProgressTracker: React.FC<ProgressTrackerProps> = ({ current = 0, all = 1 
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    height: 20,
+    height: 17,
     width: widthBar,
     borderRadius: 10,
     overflow: 'hidden',
@@ -55,8 +55,8 @@ const styles = StyleSheet.create({
   image: {
     position: 'absolute', // Position the image absolutely within the container
     top: -10, // Adjust the vertical position if needed
-    width: 50,
-    height: 50,
+    width: 48,
+    height: 48,
     resizeMode: 'contain',
   },
 });
