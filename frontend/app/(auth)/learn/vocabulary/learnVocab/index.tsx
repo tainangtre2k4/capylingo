@@ -6,6 +6,7 @@ import { ScrollView, Platform, View, Text, StyleSheet, Dimensions, StatusBar as 
 import Flashcard from '@/components/learnVocab/flashcard';
 import RewriteVocab from '@/components/learnVocab/rewriteVocab';
 import { useVocabList } from '@/src/api/level/index';
+import ProgressTracker from '@/components/ProgressTracker';
 
 const topicID = 1;
 const { width, height } = Dimensions.get('screen');
@@ -23,11 +24,13 @@ const LearnVocab = () => {
       header: () => (
         <View style={styles.headerContainer}>
           <BackButton />
+          <ProgressTracker current={currentIndex} all={Math.max(vocabs.length*2 + incorrectVocabs.length - 1, 1)} />
+
           <View style={styles.headerFillerContainer} />
         </View>
       ),
     });
-  }, [navigation]);
+  }, [navigation, currentIndex, incorrectVocabs.length]);
 
   if (loading) {
     return <Text>Loading...</Text>;
@@ -40,7 +43,7 @@ const LearnVocab = () => {
   const goToNextVocab = () => {
     if (currentIndex < vocabs.length*2 + incorrectVocabs.length - 1) {
       const nextIndex = currentIndex + 1;
-      setCurrentIndex(nextIndex);
+      //setCurrentIndex(nextIndex);
       scrollViewRef.current?.scrollTo({
         x: nextIndex * width,
         animated: true,
