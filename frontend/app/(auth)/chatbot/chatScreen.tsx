@@ -5,6 +5,7 @@ import { FontAwesome } from '@expo/vector-icons';
 import GlobalApi from '@/utils/globalApi';
 import ChatFaceData from '@/constants/ChatFaceData';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Stack } from 'expo-router';
 
 interface ChatUser {
   _id: string | number; // Adjusted to match IMessage type
@@ -33,7 +34,6 @@ export default function ChatScreen() {
       const id = await AsyncStorage.getItem('chatFaceId');
       const index = id ? parseInt(id, 10) : 0;
       const faceData = !isNaN(index) && index < ChatFaceData.length ? ChatFaceData[index] : ChatFaceData[0];
-      console.log(faceData);
       
       setMessages([
         {
@@ -55,7 +55,6 @@ export default function ChatScreen() {
   };
 
   useEffect(() => {
-    console.log('Updated ChatBot Face:', chatBotFace); // This will log the updated value
   }, [chatBotFace]);
 
   const onSend = useCallback((messages: IMessage[] = []) => {
@@ -71,7 +70,6 @@ export default function ChatScreen() {
       try {
         const resp = await GlobalApi.getGeminiApi(msg);
         const responseContent = resp.data.response || "Sorry, I cannot help with it";
-        console.log('Current ChatBot Face:', chatBotFace); // Debugging log
         const chatAIResp: ChatMessage[] = [
           {
             _id: Math.random() * (9999999 - 1),
@@ -131,7 +129,6 @@ export default function ChatScreen() {
       {...props}
       containerStyle={{
         padding: 3,
-        backgroundColor: '#671ddf',
       }}
     />
   );
@@ -146,6 +143,9 @@ export default function ChatScreen() {
 
   return (
     <View style={{ flex: 1, backgroundColor: '#fff' }}>
+      <Stack.Screen
+        options={{headerShown:true,headerTitle:'Chat Bot AI',headerBackTitleVisible:false}}
+      />
       <GiftedChat
         messages={messages}
         isTyping={loading}
