@@ -4,9 +4,9 @@ import {Stack} from 'expo-router'
 
 const VocabularyStack = () => {
   return (  
-    <SafeAreaView style={{flex: 1, backgroundColor: '#fff'}}>
+    
       <Stack screenOptions={{headerShown: false}}/>
-    </SafeAreaView>  
+
   )
 }
 

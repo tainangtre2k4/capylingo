@@ -7,10 +7,10 @@ const LearnStack = () => {
 
     return (
         <View style={{flex: 1, backgroundColor: '#3DB2FF'}}>
-            <SafeAreaView style={{flex: 1, backgroundColor: '#3DB2FF'}}>
+            
                 <StatusBar style='light' backgroundColor='#3DB2FF'/>
                 <Stack screenOptions={{headerShown: false}}/>
-            </SafeAreaView>
+         
         </View>
 
     )
