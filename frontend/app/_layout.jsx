@@ -5,6 +5,7 @@ import { useSegments, useRouter } from 'expo-router';
 import { useEffect } from 'react';
 import { View } from 'react-native';
 import QueryProvider from '../src/providers/QueryProvider.tsx'
+import '../global.css';
 const publishableKey=process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY
 const tokenCache = {
   async getToken(key) {

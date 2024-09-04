@@ -1,8 +1,6 @@
 import React from 'react'
-import { SafeAreaView } from 'react-native'
-import { Stack } from 'expo-router'
-import HeaderProgressTracker from "@/components/learn/HeaderProgressTracker";
-import {StatusBar} from 'expo-status-bar';
+import {SafeAreaView} from 'react-native'
+import {Stack} from 'expo-router'
 
 const VocabularyStack = () => {
   return (  
