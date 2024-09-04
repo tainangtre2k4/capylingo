@@ -1,32 +1,11 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {
-    Dimensions,
-    FlatList,
-    Platform,
-    ScrollView,
-    StatusBar as RNStatusBar,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
-} from 'react-native';
+import {Dimensions, FlatList, ScrollView, StyleSheet, Text, TouchableOpacity, View,} from 'react-native';
 import {Audio} from 'expo-av';
 import {Ionicons} from '@expo/vector-icons';
 import {useNavigation, useRouter} from 'expo-router';
-import {DictionaryContext} from "./_layout";
+import {DictionaryContext, WordData} from "./_layout";
 
 const {width, height} = Dimensions.get('window')
-
-type Meaning = {
-    partOfSpeech: string;
-    definitions: { definition: string; example?: string }[];
-};
-
-type WordData = {
-    word: string;
-    phonetics: { audio: string }[];
-    meanings: Meaning[];
-};
 
 const History = () => {
     const navigation = useNavigation();
@@ -36,7 +15,7 @@ const History = () => {
     const [data, setData] = useState<WordData | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [expandedItem, setExpandedItem] = useState<string | null>(null);
-    const {history, favorite, setHistory, setFavorite} = useContext(DictionaryContext);
+    const {history, favorite, cache, setHistory, setFavorite, setCache} = useContext(DictionaryContext);
 
     useEffect(() => {
         navigation.setOptions({
@@ -48,13 +27,13 @@ const History = () => {
                         <TouchableOpacity style={styles.headerIcon} activeOpacity={0.6} onPress={() => {
                             router.back()
                         }}>
-                            <Ionicons name='timer' size={24} color='#0693F1'/>
+                            <Ionicons name='timer' size={20} color='#0693F1'/>
                         </TouchableOpacity>
-                        <View style={{marginHorizontal: 10}}/>
+                        <View style={{marginHorizontal: 8}}/>
                         <TouchableOpacity style={styles.headerIcon} activeOpacity={0.6} onPress={() => {
                             setHistory([])
                         }}>
-                            <Ionicons name='trash' size={24} color='#0693F1'/>
+                            <Ionicons name='trash' size={20} color='#0693F1'/>
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -70,6 +49,14 @@ const History = () => {
             return;
         }
 
+        // Check if the word is in the cache
+        if (cache[item]) {
+            setData(cache[item]);
+            setCheckedWord(item);
+            setError(null);
+            return;
+        }
+
         const url = `https://api.dictionaryapi.dev/api/v2/entries/en/${item}`;
 
         try {
@@ -81,11 +68,8 @@ const History = () => {
                 setData(wordData);
                 setCheckedWord(wordData.word);
 
-                // Update history: remove old entry if exists, then add new word at the top
-                // setHistory((prevHistory) => {
-                //     const filteredHistory = prevHistory.filter(word => word !== wordData.word);
-                //     return [wordData.word, ...filteredHistory];
-                // });
+                // Add the word data to the cache
+                setCache(prevCache => ({...prevCache, [wordData.word]: wordData}));
 
                 setError(null);
             } else {
@@ -119,10 +103,8 @@ const History = () => {
         if (checkedWord) {
             setFavorite((prevFavorites) => {
                 if (prevFavorites.includes(checkedWord)) {
-                    // Remove the word if it already exists in favorites
                     return prevFavorites.filter(word => word !== checkedWord);
                 } else {
-                    // Add the word if it does not exist in favorites
                     return [...prevFavorites, checkedWord];
                 }
             });
@@ -134,7 +116,7 @@ const History = () => {
 
         const handleToggle = () => {
             if (isExpanded) {
-                setExpandedItem(null); // Retract if already expanded
+                setExpandedItem(null);
             } else {
                 setExpandedItem(item);
                 getInfo(item);
@@ -142,29 +124,26 @@ const History = () => {
         };
 
         return (
-            <View style={[isExpanded ? null : styles.historyItem, {marginVertical: 10}]}>
-                <TouchableOpacity onPress={handleToggle} activeOpacity={0.6} style={{flexDirection: 'row', flex: 1}}>
-                    {!isExpanded && <Text style={styles.historyText}>{item}</Text>}
-                </TouchableOpacity>
+            <View style={isExpanded ? styles.historyItemsExpanded : {}}>
+                {!isExpanded && <TouchableOpacity onPress={handleToggle} activeOpacity={0.6} style={styles.historyItem}>
+                    <Text style={styles.historyText}>{item}</Text>
+                </TouchableOpacity>}
                 {isExpanded && checkedWord === item && !error && (
                     <View style={styles.resultsContainer}>
                         <View style={styles.resultHeaderContainer}>
                             <TouchableOpacity onPress={handleToggle} activeOpacity={0.6}>
                                 <Text style={styles.word}>{checkedWord}</Text>
                             </TouchableOpacity>
-                            <View style={styles.headerIconsContainer}>
-                                <TouchableOpacity style={styles.cardButton} onPress={playAudio}>
-                                    <Ionicons name="volume-high" size={28} color="white"/>
-                                </TouchableOpacity>
-                                <View style={{marginHorizontal: 10}}/>
-                                <TouchableOpacity style={styles.cardButton} onPress={handleFavorite}>
-                                    <Ionicons
-                                        name={favorite.includes(checkedWord) ? "star" : "star-outline"}
-                                        size={28}
-                                        color="white"
-                                    />
-                                </TouchableOpacity>
-                            </View>
+                            <TouchableOpacity style={styles.cardButton} onPress={playAudio}>
+                                <Ionicons name="volume-high" size={24} color="#0693F1"/>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={styles.cardButton} onPress={handleFavorite}>
+                                <Ionicons
+                                    name={favorite.includes(checkedWord) ? "star" : "star-outline"}
+                                    size={24}
+                                    color="#0693F1"
+                                />
+                            </TouchableOpacity>
                         </View>
                         <ScrollView overScrollMode='never' style={{height: height * 0.3}}>
                             {data?.meanings.map((meaning, index) => (
@@ -208,16 +187,16 @@ export default History;
 
 const styles = StyleSheet.create({
     headerContainer: {
-        paddingVertical: 12,
+        paddingVertical: 6,
         paddingHorizontal: 20,
-        marginTop: Platform.OS === 'android' ? (RNStatusBar.currentHeight || 20) : 0,
+        // marginTop: Platform.OS === 'android' ? (RNStatusBar.currentHeight || 20) : 0,
         backgroundColor: '#3DB2FF',
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
     },
     headerTitle: {
-        fontSize: 24,
+        fontSize: 22,
         fontWeight: '700',
         color: 'white'
     },
@@ -225,8 +204,8 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
     },
     headerIcon: {
-        padding: 10,
-        borderRadius: 12,
+        padding: 8,
+        borderRadius: 10,
         backgroundColor: 'white',
         elevation: 4,
         shadowOffset: {width: 0, height: 2},
@@ -237,19 +216,19 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#F3F3F3',
-        padding: 20,
-        paddingBottom: 170,
+        paddingBottom: 70,
+        paddingTop: 10
     },
     errorText: {
         color: 'red',
-        fontSize: 24,
+        fontSize: 20,
         marginTop: 10,
     },
     button: {
         backgroundColor: '#0693F1',
-        padding: 12,
+        padding: 8,
         marginRight: 4,
-        borderRadius: 12,
+        borderRadius: 10,
     },
     buttonText: {
         color: 'white',
@@ -264,34 +243,31 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.2,
         shadowRadius: 4,
         elevation: 4,
-        padding: 20,
+        padding: 10,
     },
     resultHeaderContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'space-between',
-        marginBottom: 10,
+
     },
     word: {
-        fontSize: 36,
+        fontSize: 24,
         fontWeight: 'bold',
         marginBottom: 10,
+        marginRight: 4
     },
     cardButton: {
-        backgroundColor: '#0693F1',
-        padding: 12,
-        borderRadius: 12,
-        alignItems: 'center',
-        justifyContent: 'center',
-        shadowColor: 'black',
-        shadowOffset: {width: 0, height: 2},
-        shadowOpacity: 0.2,
-        shadowRadius: 4,
-        elevation: 4,
+        padding: 4,
+        marginLeft: 6
     },
     resultText: {
-        fontSize: 18,
+        fontSize: 14,
         marginBottom: 10,
+    },
+    historyItemsExpanded: {
+        flexDirection: 'row',
+        flex: 1,
+        padding: 10
     },
     historyItem: {
         flexDirection: 'row',
@@ -303,24 +279,16 @@ const styles = StyleSheet.create({
         shadowRadius: 4,
         shadowColor: 'black',
         borderRadius: 12,
+        padding: 10,
+        marginVertical: 4,
+        marginHorizontal: 10,
     },
     historyText: {
-        fontSize: 24,
-        padding: 16,
-    },
-    clearButton: {
-        backgroundColor: '#FF4B4C',
-        padding: 16,
-        marginTop: 20,
-        borderRadius: 12,
-    },
-    clearButtonText: {
-        color: '#fff',
-        fontWeight: 'bold',
-        fontSize: 18,
+        fontSize: 16,
+        fontWeight: '500',
     },
     partOfSpeech: {
-        fontSize: 20,
+        fontSize: 14,
         fontWeight: 'bold',
         marginTop: 10
     }

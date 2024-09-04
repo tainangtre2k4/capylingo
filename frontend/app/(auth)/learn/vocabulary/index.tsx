@@ -35,17 +35,16 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     header: {
-        paddingVertical: 10,
-        paddingHorizontal: 20,
-        // marginTop: (RNStatusBar.currentHeight || 20),
+        paddingVertical: 6,
+        paddingHorizontal: 10,
         backgroundColor: '#3DB2FF',
         alignItems: 'center',
         flexDirection: 'row'
     },
     title: {
-        marginHorizontal: 20,
+        marginHorizontal: 10,
         color: 'white',
-        fontSize: 24,
+        fontSize: 22,
         fontWeight: '500'
     }
 })

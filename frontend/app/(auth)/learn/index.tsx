@@ -1,4 +1,4 @@
-import {Dimensions, Image, StatusBar as RNStatusBar, StyleSheet, Text, TextInput, View} from 'react-native';
+import {Dimensions, Image, StyleSheet, Text, TextInput, TouchableOpacity, View} from 'react-native';
 import {useUser} from '@clerk/clerk-expo';
 import {Ionicons} from '@expo/vector-icons'
 import WOTDCard from '@/components/learn/WOTDCard';
@@ -20,7 +20,9 @@ const Learn = () => {
                         <Text style={styles.dictionaryLabel}>Capybara Dictionary</Text>
                         <View style={styles.searchBox}>
                             <TextInput style={styles.searchInput} placeholder='Quick Search' />
-                            <Ionicons name='search-outline' size={20} color='#3DB2FF' />
+                            <TouchableOpacity style={styles.searchButton}>
+                                <Ionicons name='search-outline' size={18} color='white' />
+                            </TouchableOpacity>
                         </View>
                     </View>
                     <Image
@@ -29,7 +31,7 @@ const Learn = () => {
                     />
                 </View>
                 <View style={styles.bodyContainer}>
-                    <View style={styles.indicator} />
+                    {/*<View style={styles.indicator} />*/}
                     <Text style={styles.bodyTitle}>Your Learning Progress</Text>
                     <View style={styles.trackingCardsContainer}>
                         <WOTDCard />
@@ -54,14 +56,14 @@ const styles = StyleSheet.create({
     },
     headBanner: {
         backgroundColor: "#3DB2FF",
-        paddingTop: RNStatusBar.currentHeight || height * .042,
         justifyContent: 'space-between',
-        paddingHorizontal: width * .047,
+        paddingHorizontal: 10,
         flexDirection: 'row',
+        paddingTop: 20
     },
     GreetingContainer: {
         paddingTop: height * .025,
-        paddingBottom: height * .042
+        paddingBottom: height * .04
 
     },
     greeting: {
@@ -69,29 +71,36 @@ const styles = StyleSheet.create({
         fontWeight: '500',
         color: 'white',
         marginBottom: height * .02,
-        marginHorizontal: width * .011
+        marginHorizontal: 10
     },
     dictionaryLabel: {
         fontSize: 20,
         fontWeight: '700',
         color: 'white',
         marginBottom: height * .02,
-        marginHorizontal: width * .011
+        marginLeft: 10,
+        marginRight: 30
     },
     searchBox: {
         flexDirection: 'row',
         backgroundColor: 'white',
-        borderRadius: width * .04,
+        borderRadius: 10,
         justifyContent: 'center',
         alignItems: 'center',
-        paddingVertical: height * .004,
-        paddingHorizontal: width * .03,
+        padding: 2,
         elevation: 4
     },
+    searchButton: {
+        backgroundColor: '#3DB2FF',
+        padding: 4,
+        borderRadius: 8
+    },
     searchInput: {
-        width: width * .42,
-        fontSize: 14,
-        fontStyle: 'italic'
+        flexDirection: 'row',
+        flex: 1,
+        fontSize: 16,
+        fontStyle: 'italic',
+        paddingLeft: 8
     },
     image: {
         marginTop: height * .034,
@@ -104,15 +113,15 @@ const styles = StyleSheet.create({
         borderTopRightRadius: width * .04,
         borderTopLeftRadius: width * .04,
         backgroundColor: 'white',
-        paddingHorizontal: width * .042,
-        paddingVertical: width * .042,
+        paddingHorizontal: 20,
+        paddingVertical: 10,
     },
-    indicator: {
-        width: width * .2,
-        borderWidth: 2,
-        borderColor: '#A2A7A9',
-        alignSelf: 'center'
-    },
+    // indicator: {
+    //     width: width * .2,
+    //     borderWidth: 2,
+    //     borderColor: '#A2A7A9',
+    //     alignSelf: 'center'
+    // },
     bodyTitle: {
         fontSize: 22,
         fontWeight: '600',

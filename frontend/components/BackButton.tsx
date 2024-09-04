@@ -8,7 +8,7 @@ const BackButton = () => {
 
   return (
     <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
-      <Ionicons name="chevron-back" size={24} color="#0693F1" />
+      <Ionicons name="chevron-back" size={20} color="#0693F1" />
     </TouchableOpacity>
 )
 }
@@ -17,12 +17,15 @@ export default BackButton
 
 const styles = StyleSheet.create({
   backButton: {
-    height: 42,
-    width: 42,
-    borderRadius: 12,
+    padding: 8,
+    borderRadius: 10,
     backgroundColor: 'white',
     alignItems: 'center',
     justifyContent: 'center',
-    elevation: 4
+    elevation: 4,
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    shadowColor: 'black',
   },
 })

@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
     ActivityIndicator,
     Dimensions,
@@ -8,10 +8,12 @@ import {
     Text,
     TouchableOpacity,
     View,
+    TouchableWithoutFeedback,
 } from 'react-native';
-import {Ionicons} from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {generate} from "random-words";
+import { generate } from "random-words";
+
+const { width, height } = Dimensions.get('window');
 
 type Meaning = {
     partOfSpeech: string;
@@ -37,28 +39,37 @@ const WOTDCard = () => {
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
     const [wordOfTheDay, setWordOfTheDay] = useState('');
+    const [cachedWords, setCachedWords] = useState<Record<string, WordData>>({});
 
-    const getWordOfTheDay = async () => {
+    const generateValidWord = () => {
+        let newWord;
+        do {
+            const result = generate({ minLength: 3, maxLength: 10 });
+            newWord = Array.isArray(result) ? result.join(' ') : result; // Ensure newWord is a string
+            console.log(newWord);
+        } while (newWord.length < 3);
+        return newWord;
+    };
+
+    const getWordOfTheDay = useCallback(async () => {
         try {
             const storedWord = await AsyncStorage.getItem(STORAGE_KEYS.word);
             const storedDate = await AsyncStorage.getItem(STORAGE_KEYS.date);
             const today = new Date().toDateString();
 
             if (storedWord && storedDate === today) {
-                // Return the stored word if it's the same day
                 return storedWord;
             } else {
-                // Generate a new word and store it with today's date
-                const newWord = generate()[0];
+                const newWord = generateValidWord();
                 await AsyncStorage.setItem(STORAGE_KEYS.word, newWord);
                 await AsyncStorage.setItem(STORAGE_KEYS.date, today);
                 return newWord;
             }
         } catch (error) {
             console.error('Failed to fetch or set word of the day', error);
-            return FALLBACK_WORD; // Fallback word in case of error
+            return FALLBACK_WORD;
         }
-    };
+    }, []);
 
     useEffect(() => {
         const fetchWord = async () => {
@@ -68,21 +79,28 @@ const WOTDCard = () => {
 
         fetchWord();
 
-        // Set a timeout to reset the word at midnight
         const now = new Date();
-        const midnight = new Date();
+        const midnight = new Date(now);
         midnight.setHours(24, 0, 0, 0);
         const timeUntilMidnight = midnight.getTime() - now.getTime();
 
         const timer = setTimeout(fetchWord, timeUntilMidnight);
 
         return () => clearTimeout(timer);
-    }, []);
+    }, [getWordOfTheDay]);
 
-    const fetchWordData = async () => {
+    const fetchWordData = useCallback(async () => {
         if (!wordOfTheDay.trim()) return;
 
+        // Check if the word data is already cached
+        if (cachedWords[wordOfTheDay]) {
+            setData(cachedWords[wordOfTheDay]);
+            setLoading(false);
+            return;
+        }
+
         setLoading(true);
+        setError(null);
         let word = wordOfTheDay;
         const startTime = Date.now();
         const timeout = 3000; // 3 seconds timeout
@@ -95,36 +113,39 @@ const WOTDCard = () => {
 
                 if (response.status === 200) {
                     setData(fetchedData[0]);
-                    setError(null);
-                    return; // Exit loop if a valid word is found
+                    // Update the cache with the new word data
+                    setCachedWords(prevCache => ({
+                        ...prevCache,
+                        [word]: fetchedData[0]
+                    }));
+                    setLoading(false);
+                    return;
                 } else {
-                    word = generate()[0]; // Generate a new random word
+                    word = generateValidWord();
                     setWordOfTheDay(word);
                     await AsyncStorage.setItem(STORAGE_KEYS.word, word);
                 }
             } catch (error) {
                 console.error('Error fetching data:', error);
-                setError('An error occurred while fetching data');
-                break; // Exit loop on fetch error
             }
         }
 
         // Fallback to 'apple' if timeout reached or persistent errors occur
         setWordOfTheDay(FALLBACK_WORD);
-        setError('Word not found, fallback to default word.');
+        setError(null);
         setLoading(false);
-    };
+    }, [wordOfTheDay, cachedWords]);
 
-    const handleOpenModal = () => {
-        fetchWordData();
+    const handleOpenModal = useCallback(() => {
         setModalVisible(true);
-    };
+        fetchWordData();
+    }, [fetchWordData]);
 
-    const handleCloseModal = () => {
+    const handleCloseModal = useCallback(() => {
         setModalVisible(false);
         setData(null);
         setError(null);
-    };
+    }, []);
 
     const { height: screenHeight } = Dimensions.get('window');
     const maxHeight = screenHeight * 0.7;
@@ -134,15 +155,7 @@ const WOTDCard = () => {
             <TouchableOpacity onPress={handleOpenModal}>
                 <View style={styles.container}>
                     <Text style={styles.title}>Word of the day</Text>
-                    <View style={styles.wordContainer}>
-                        <View>
-                            <Text style={styles.label}>{wordOfTheDay}</Text>
-                            <Text style={styles.text}>Time to review!</Text>
-                        </View>
-                        <View style={styles.buttonContainer}>
-                            <Ionicons name='play' size={20} color='#0074CE'/>
-                        </View>
-                    </View>
+                    <Text style={styles.label}>{wordOfTheDay}</Text>
                 </View>
             </TouchableOpacity>
 
@@ -153,20 +166,20 @@ const WOTDCard = () => {
                 onRequestClose={handleCloseModal}
             >
                 <View style={styles.modalContainer}>
+                    <TouchableWithoutFeedback onPress={handleCloseModal}>
+                        <View style={styles.modalOverlay} />
+                    </TouchableWithoutFeedback>
                     <View style={[styles.modalContent, { maxHeight }]}>
                         {loading ? (
-                            <ActivityIndicator size='large' color='#0693F1'/>
+                            <ActivityIndicator size='large' color='#0693F1' />
                         ) : error ? (
                             <Text style={styles.errorText}>{error}</Text>
                         ) : data ? (
                             <View style={styles.resultsContainer}>
                                 <View style={styles.resultHeaderContainer}>
                                     <Text style={styles.word}>{data.word}</Text>
-                                    <TouchableOpacity style={styles.closeButton} onPress={handleCloseModal} activeOpacity={0.6}>
-                                        <Text style={styles.closeButtonText}>Close</Text>
-                                    </TouchableOpacity>
                                 </View>
-                                <ScrollView overScrollMode='never' style={{flexGrow: 0}}>
+                                <ScrollView overScrollMode='never' style={{ flexGrow: 0 }}>
                                     {data.meanings.map((meaning, index) => (
                                         <View key={index}>
                                             <Text style={styles.partOfSpeech}>{meaning.partOfSpeech}</Text>
@@ -199,26 +212,23 @@ export default WOTDCard;
 const styles = StyleSheet.create({
     container: {
         backgroundColor: '#27AE60',
-        width: 170,
+        width: width * 0.4,
         height: 100,
         padding: 12,
         borderRadius: 12,
+        alignItems: 'center',
+        justifyContent: 'center'
     },
     title: {
         color: 'white',
-        fontSize: 14,
+        fontSize: 16,
         fontWeight: '500',
     },
     label: {
         color: 'white',
-        fontSize: 20,
+        fontSize: 24,
         fontWeight: 'bold',
         marginVertical: 6,
-    },
-    text: {
-        color: 'white',
-        fontSize: 12,
-        fontWeight: '400',
     },
     wordContainer: {
         flexDirection: 'row',
@@ -236,11 +246,35 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
+    },
+    modalOverlay: {
+        position: 'absolute',
+        top: 0,
+        bottom: 0,
+        left: 0,
+        right: 0,
         backgroundColor: 'rgba(0, 0, 0, 0.2)',
+    },
+    word: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        marginBottom: 10,
+        marginRight: 4
     },
     modalContent: {
         width: '80%',
+        backgroundColor: 'white',
         borderRadius: 12,
+        padding: 20,
+        alignItems: 'center',
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5
     },
     errorText: {
         color: 'red',
@@ -251,42 +285,20 @@ const styles = StyleSheet.create({
     resultsContainer: {
         backgroundColor: 'white',
         borderRadius: 16,
-        padding: 20,
-        shadowColor: 'black',
-        shadowOffset: {width: 0, height: 2},
-        shadowOpacity: 0.2,
-        shadowRadius: 4,
-        elevation: 4,
-    },
-    word: {
-        fontSize: 36,
-        fontWeight: 'bold',
-        marginBottom: 10,
+        padding: 10,
     },
     partOfSpeech: {
-        fontSize: 20,
+        fontSize: 14,
         fontWeight: 'bold',
-        marginTop: 10,
+        marginTop: 10
     },
     resultText: {
-        fontSize: 18,
+        fontSize: 14,
         marginBottom: 10,
     },
     resultHeaderContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'space-between',
-        marginBottom: 10,
-    },
-    closeButton: {
-        backgroundColor: '#FF4B4C',
-        padding: 12,
-        borderRadius: 10,
-        alignItems: 'center',
-    },
-    closeButtonText: {
-        color: '#fff',
-        fontWeight: 'bold',
-        fontSize: 14,
+        justifyContent: 'center',
     },
 });

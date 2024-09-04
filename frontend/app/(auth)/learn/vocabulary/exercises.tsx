@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        marginTop: Platform.OS === 'android' ? (RNStatusBar.currentHeight || 20) : 0,
+        // marginTop: Platform.OS === 'android' ? (RNStatusBar.currentHeight || 20) : 0,
         paddingVertical: 12,
         backgroundColor: 'white',
         paddingHorizontal: 20,
