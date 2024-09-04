@@ -126,8 +126,10 @@ const {width} = Dimensions.get('screen')
 
 const SliderItem = ({slideItem, index, scrollX}: Props) => {
   return (
-    //<Link href={`/(news)/${slideItem.article_id}?url=${encodeURIComponent(slideItem.link)}`} asChild> 
-    <TouchableOpacity onPress={() => WebBrowser.openBrowserAsync(slideItem.link)}>
+    <Link href={`/(news)/${slideItem.article_id}?url=${encodeURIComponent(slideItem.link)}`} asChild> 
+    <TouchableOpacity 
+    // onPress={() => WebBrowser.openBrowserAsync(slideItem.link)}
+    >
     <Animated.View 
         style = {[styles.itemWrapper]} 
         key ={slideItem.article_id}>
@@ -146,7 +148,7 @@ const SliderItem = ({slideItem, index, scrollX}: Props) => {
       </LinearGradient>
     </Animated.View>
     </TouchableOpacity>
-    //</Link>
+    </Link>
   )
 }
 

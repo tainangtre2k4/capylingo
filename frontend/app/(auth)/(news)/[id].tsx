@@ -66,28 +66,34 @@
 // app/news/[id].tsx
 // app/news/[id].tsx
 // WebViewScreen.tsx
-import React from 'react';
+import React, { useState } from 'react';
 import { WebView } from 'react-native-webview';
 import { View, ActivityIndicator, StyleSheet, Text, Button } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import * as Linking from 'expo-linking';
 import * as WebBrowser from 'expo-web-browser';
+import Constants from 'expo-constants';
 
 const WebViewScreen = () => {
   // Use useLocalSearchParams to access the URL
   const { url } = useLocalSearchParams<{ url: string }>();
+  const [favourite, setFavourite] = useState('');
 
   return (
-    <View style={styles.container}>
-      <Button
-        title="Open URL with the system browser"
-        onPress={() => Linking.openURL(url)}
-      />
-      <Button
-        title="Open URL with an in-app browser"
-        onPress={() => WebBrowser.openBrowserAsync('https://expo.dev')}
-      />
-    </View>
+    // <View style={styles.container}>
+    //   <Button
+    //     title="Open URL with the system browser"
+    //     onPress={() => Linking.openURL(url)}
+    //   />
+    //   <Button
+    //     title="Open URL with an in-app browser"
+    //     onPress={() => WebBrowser.openBrowserAsync('https://expo.dev')}
+    //   />
+    // </View>
+    <WebView
+    style={styles.container}
+    source={{ uri: url }}
+  />
   );
 };
 
