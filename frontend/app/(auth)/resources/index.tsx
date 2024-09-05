@@ -1,88 +1,106 @@
-// Ai muon test thi hide cai header di nhe !
 import * as React from 'react';
-import { StatusBar, Animated, Text, Image, View, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
+import { Animated, Dimensions, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useRouter } from "expo-router";
+
 const { width, height } = Dimensions.get('screen');
 
-const bgs = [ '#FF4B4C', '#FFC107', '#99CC29', '#0074CE'];
+const bgs: string[] = ['#FF4B4C', '#FFC107', '#99CC29', '#0074CE'];
 
-import capyNews from '../../../assets/images/resources/capyNews.png';
-import capyGames from '../../../assets/images/resources/capyGames.png';
-import capyCommunity from '../../../assets/images/resources/capyCommunity.png';
-import capyAI from '../../../assets/images/resources/capyAI.png';
-
-const DATA = [
-  {
-    key: "1",
-    title: "Daily English News",
-    description: "Catch up on the latest news and enhance your English skills with our daily reading feature. Improve your vocabulary and comprehension with every article.",
-    image: capyNews
-  },
-  {
-    key: "2",
-    title: "Play Games",
-    description: "Play exciting games that make learning English fun. Improve your language skills through entertaining and interactive challenges.",
-    image: capyGames
-  },
-  {
-    key: "3",
-    title: "Community",
-    description: "Play exciting games that make learning English fun. Improve your language skills through entertaining and interactive challenges.",
-    image: capyCommunity
-  },
-  {
-    key: "4",
-    title: "AI Chatbot",
-    description: "Chat with our quirky digital buddy, Cabybot! He will be a great company for your journey. Our beloved Cabybot sometimes turns into Dumdumbara though...",
-    image: capyAI
-  }
-];
-
-const Indicator = ({scrollX}) => {
-    return(
-        <View style={{flexDirection: 'row', position: 'absolute', bottom: 150}}>
-            {DATA.map((_, i) => {
-                const inputRange = [(i-1)*width, i*width, (i+1)*width]
-                const scale = scrollX.interpolate({  // interpolate để chuyển đổi một thuộc tính trong style dần dần (mượt mà: màu, opacity, width, height, rotation,..)
-                  inputRange,
-                  outputRange: [0.8, 1.4, 0.8], // mảng gtri ouput ứng với input
-                  extrapolate: 'clamp',
-                })
-                const opacity = scrollX.interpolate({  // interpolate để chuyển đổi một thuộc tính trong style dần dần (mượt mà: màu, opacity, width, height, rotation,..)
-                  inputRange,
-                  outputRange: [0.6, 0.9, 0.6], // mảng gtri ouput ứng với input
-                  extrapolate: 'clamp',
-                })
-                return <Animated.View
-                    key={`indicator-${i}`}
-                    style={{
-                        height: 10,
-                        width: 10,
-                        borderRadius: 5,
-                        backgroundColor: "#fff",
-                        margin: 10,
-                        opacity,
-                        transform: [
-                          {
-                          scale,
-                          }
-                        ],
-                    }}
-                />
-            })}
-        </View>
-    )
+interface DataItem {
+    key: string;
+    title: string;
+    description: string;
+    image: any; // Consider using a more specific type if possible
+    navigate: string;
 }
 
-const Backdrop = ({scrollX}) => {
-    const backgroundColor = scrollX.interpolate({  // interpolate để chuyển đổi một thuộc tính trong style dần dần (mượt mà: màu, opacity, width, height, rotation,..)
-        inputRange: bgs.map((_,i) => i*width),
-        outputRange: bgs.map((bg)=>bg), // mảng gtri ouput ứng với input
-    })
+const DATA: DataItem[] = [
+    {
+        key: "1",
+        title: "Daily English News",
+        description: "Catch up on the latest news and enhance your English skills with our daily reading feature. Improve your vocabulary and comprehension with every article.",
+        image: require('@/assets/images/resources/capyNews.png'),
+        navigate: ''
+    },
+    {
+        key: "2",
+        title: "Community",
+        description: "Play exciting games that make learning English fun. Improve your language skills through entertaining and interactive challenges.",
+        image: require('@/assets/images/resources/capyCommunity.png'),
+        navigate: 'resources/community',
+    },
+    {
+        key: "3",
+        title: "AI Chatbot",
+        description: "Chat with our quirky digital buddy, Cabybot! He will be a great company for your journey. Our beloved Cabybot sometimes turns into Dumdumbara though...",
+        image: require('@/assets/images/resources/capyAI.png'),
+        navigate: ''
+    },
+    {
+        key: "4",
+        title: "Play Games",
+        description: "Play exciting games that make learning English fun. Improve your language skills through entertaining and interactive challenges.",
+        image: require('@/assets/images/resources/capyGames.png'),
+        navigate: ''
+    },
+];
+
+interface IndicatorProps {
+    scrollX: Animated.Value;
+}
+
+const Indicator: React.FC<IndicatorProps> = ({ scrollX }) => {
+    return (
+        <View style={{ flexDirection: 'row', position: 'absolute', bottom: 150 }}>
+            {DATA.map((_, i) => {
+                const inputRange = [(i - 1) * width, i * width, (i + 1) * width];
+                const scale = scrollX.interpolate({
+                    inputRange,
+                    outputRange: [0.8, 1.4, 0.8],
+                    extrapolate: 'clamp',
+                });
+                const opacity = scrollX.interpolate({
+                    inputRange,
+                    outputRange: [0.6, 0.9, 0.6],
+                    extrapolate: 'clamp',
+                });
+                return (
+                    <Animated.View
+                        key={`indicator-${i}`}
+                        style={{
+                            height: 10,
+                            width: 10,
+                            borderRadius: 5,
+                            backgroundColor: "#fff",
+                            margin: 10,
+                            opacity,
+                            transform: [{ scale }],
+                        }}
+                    />
+                );
+            })}
+        </View>
+    );
+};
+
+interface BackdropProps {
+    scrollX: Animated.Value;
+}
+
+const Backdrop: React.FC<BackdropProps> = ({ scrollX }) => {
+    const backgroundColor = scrollX.interpolate({
+        inputRange: bgs.map((_, i) => i * width),
+        outputRange: bgs.map((bg) => bg),
+    });
     return (
         <Animated.View
-            style={[StyleSheet.absoluteFillObject, {backgroundColor,}]} //absoluteFillObject để chiếm hết ko gian cha của nó
+            style={[StyleSheet.absoluteFillObject, { backgroundColor }]}
         />
-    )
+    );
+};
+
+interface SquareProps {
+    scrollX: Animated.Value;
 }
 
 const Square = ({scrollX}) => {
@@ -185,10 +203,11 @@ export default function App() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-     alignItems: 'center',
-    // justifyContent: 'center',
-  },
+    container: {
+        flex: 1,
+        backgroundColor: '#fff',
+        alignItems: 'center',
+    },
 });
+
+export default ResourcesStack;

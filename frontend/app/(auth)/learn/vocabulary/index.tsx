@@ -1,9 +1,7 @@
-import {Dimensions, StatusBar as RNStatusBar, StyleSheet, Text, View} from 'react-native'
+import {StatusBar as RNStatusBar, StyleSheet, Text, View} from 'react-native'
 import React, {useEffect} from 'react'
 import {Link, useNavigation} from 'expo-router'
 import BackButton from "@/components/BackButton";
-
-const {width, height} = Dimensions.get('window')
 
 const VocabularyLesson = () => {
     const navigation = useNavigation();
@@ -38,17 +36,16 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     header: {
-        paddingVertical: 10,
-        paddingHorizontal: 20,
-        marginTop: (RNStatusBar.currentHeight || 20),
+        paddingVertical: 6,
+        paddingHorizontal: 10,
         backgroundColor: '#3DB2FF',
         alignItems: 'center',
         flexDirection: 'row'
     },
     title: {
-        marginHorizontal: 20,
+        marginHorizontal: 10,
         color: 'white',
-        fontSize: 24,
+        fontSize: 22,
         fontWeight: '500'
     }
 })

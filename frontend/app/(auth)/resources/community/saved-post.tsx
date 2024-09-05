@@ -1,18 +1,21 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { View, Text, FlatList, StyleSheet, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
 import PostListItem from '@/components/community/PostListItem';
 import Header from '@/components/news/Header';
+import { useFocusEffect } from '@react-navigation/native';
 
 const SavedPostsScreen: React.FC = () => {
   const [savedPosts, setSavedPosts] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const router = useRouter();
 
-  useEffect(() => {
-    loadSavedPosts();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      loadSavedPosts();
+    }, [])
+  );
 
   const loadSavedPosts = async () => {
     setLoading(true);
@@ -27,6 +30,24 @@ const SavedPostsScreen: React.FC = () => {
     setLoading(false);
   };
 
+  const confirmRemovePost = (postId: number) => {
+    Alert.alert(
+      "Remove Bookmark",
+      "Are you sure you want to remove this post from your saved posts?",
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "Remove",
+          style: "destructive",
+          onPress: () => removePost(postId),
+        },
+      ]
+    );
+  };
+
   const removePost = async (postId: number) => {
     try {
       const updatedPosts = savedPosts.filter(post => post.id !== postId);
@@ -38,7 +59,6 @@ const SavedPostsScreen: React.FC = () => {
     }
   };
 
-  // Comment handler to navigate to comment screen
   const commentHandler = (post) => {
     router.push(`/comment?postId=${post.id}`);
   };
@@ -60,8 +80,10 @@ const SavedPostsScreen: React.FC = () => {
           renderItem={({ item }) => (
             <PostListItem
               post={item}
-              commentHandler={commentHandler} // Pass the comment handler here
+              commentHandler={commentHandler}
               show={true}
+              onRemove={() => confirmRemovePost(item.id)} // Add onRemove prop
+              savePost={true}
             />
           )}
           refreshing={loading}

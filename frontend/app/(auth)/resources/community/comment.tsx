@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, TextInput, Button, Alert, ActivityIndicator } from 'react-native';
+import { View, Text, FlatList, TextInput, Button, Alert, ActivityIndicator, BackHandler } from 'react-native';
 import { useRouter, useLocalSearchParams, Stack } from 'expo-router';
 import { supabase } from '@/lib/supabase';
 import { useUser } from '@clerk/clerk-expo';
 import Header from '@/components/news/Header';
 import PostListItem from '@/components/community/PostListItem';
-
 // Define types for the search params, comments, post, and user
 type SearchParams = {
   postId: string;
@@ -42,7 +41,6 @@ const CommentScreen: React.FC = () => {
   const [newComment, setNewComment] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
   const [loadingPost, setLoadingPost] = useState<boolean>(true);
-
   useEffect(() => {
     if (postId) {
       fetchPost();
@@ -102,13 +100,7 @@ const CommentScreen: React.FC = () => {
   
   return (
     <View style={{ flex: 1 }}>
-      <Stack.Screen 
-        options={{
-          headerShown:true,
-          headerTitle:'Comments',
-          headerBackTitleVisible: false,
-        }}
-      />
+      <Header title='Comments' backHandler={()=>{router.back()}} search={false}/>
       
       {loadingPost ? (
         <ActivityIndicator size="large" color='#3DB2FF' />
