@@ -6,17 +6,16 @@ import ResultBox from '../exComponents/resultBox';
 import { sharedStyles, correctColor, incorrectAnswerColor } from '../styles/sharedStyles';
 import ResultContent from './resultContent';
 
-const type3 = () => {
 
-  const question = "Our vicar is always ……………money for for one cause or another.";
-  const correctAnswerIndex = 0;
-  const answers = [
-    'lifting',
-    'gathering',
-    'raising',
-    'asking',
-  ];
-
+interface VocabType2Props {
+  question: string;
+  correctAnswerIndex: number;
+  answers: string[];
+  onNext: () => void;
+  onCorrectAnswer: () => void;
+  onIncorrectAnswer: () => void;
+}
+const VocabType2: React.FC<VocabType2Props> = ({ question, correctAnswerIndex, answers, onNext, onCorrectAnswer, onIncorrectAnswer }) => {
   
   const [userAnswer, setUserAnswer] = useState<number | null>(null);
   const [result, setResult] = useState<'correct' | 'incorrect' | null>(null);
@@ -25,8 +24,10 @@ const type3 = () => {
   const checkAnswer = () => {
     if (userAnswer === correctAnswerIndex) {
         setResult('correct');
+        onCorrectAnswer();
       } else {
         setResult('incorrect');
+        onIncorrectAnswer();
       }
       setTimeout(() => {
         setShowCorrectAnswer(true);
@@ -67,9 +68,9 @@ const type3 = () => {
 
         <ResultBox result={result} content={<ResultContent result={result} />} />
 
-        <CheckAnswerButton onPress={checkAnswer} result={result} />
+        <CheckAnswerButton onPress={checkAnswer} onNext={onNext} result={result} />
       </View>
   );
 };
 
-export default type3;
+export default VocabType2;

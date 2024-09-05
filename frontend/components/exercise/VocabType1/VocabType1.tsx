@@ -6,17 +6,19 @@ import ResultBox from '../exComponents/resultBox';
 import { sharedStyles, correctColor, incorrectAnswerColor } from '../styles/sharedStyles';
 import ResultContent from './resultContent';
 
-const type4 = () => {
+interface Type1Props {
+  onNext: () => void;
+  onCorrectAnswer: () => void;
+  onIncorrectAnswer: () => void;
+  questionImageUrl: string;
+  correctAnswerIndex: number;
+  answers: string[];
+}
+
+
+const ExVocabType1: React.FC<Type1Props> = ({ onNext, questionImageUrl, correctAnswerIndex, answers, onCorrectAnswer, onIncorrectAnswer})  => {
 
   const question = "What does the picture mean?";
-  const questionImage = require('../../../../assets/images/nose.png');
-  const correctAnswerIndex = 2;
-  const answers = [
-    'hair',
-    'eyes',
-    'nose',
-    'leg',
-  ];
 
   
   const [userAnswer, setUserAnswer] = useState<number | null>(null);
@@ -25,8 +27,10 @@ const type4 = () => {
   const checkAnswer = () => {
     if (userAnswer === correctAnswerIndex) {
         setResult('correct');
+        onCorrectAnswer();
       } else {
         setResult('incorrect');
+        onIncorrectAnswer();
       }
   };
 
@@ -34,7 +38,7 @@ const type4 = () => {
     <View style={sharedStyles.container}>
         <QuestionText question={question} />
         <Image
-            source={questionImage}
+             source={{ uri: questionImageUrl }}
             style={sharedStyles.imageQuestion}
         />
 
@@ -66,9 +70,9 @@ const type4 = () => {
 
       <ResultBox result={result} content={<ResultContent result={result} answer={answers[correctAnswerIndex]} />} />
 
-      <CheckAnswerButton onPress={checkAnswer} result={result} />
+      <CheckAnswerButton onPress={checkAnswer} onNext={onNext} result={result} />
     </View>
   );
 };
 
-export default type4;
+export default ExVocabType1;

@@ -1,11 +1,13 @@
 import React from 'react'
 import {SafeAreaView} from 'react-native'
 import {Stack} from 'expo-router'
+import {StatusBar} from 'expo-status-bar';
 
 const ResourcesStack = () => {
     return (
         <SafeAreaView style={{flex: 1, backgroundColor: '#fff'}}>
-            <Stack screenOptions={{headerShown: false, statusBarColor: 'white', statusBarStyle: 'dark'}}/>
+            <StatusBar style='dark' backgroundColor='white'/>
+            <Stack screenOptions={{headerShown: false}}/>
         </SafeAreaView>
     )
 }

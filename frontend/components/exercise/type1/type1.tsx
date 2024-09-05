@@ -6,7 +6,11 @@ import ResultBox from '../exComponents/resultBox';
 import { sharedStyles } from '../styles/sharedStyles';
 import ResultContent from './resultContent';
 
-const type1 = () => {
+interface Type1Props {
+  onNext: () => void;
+}
+
+const type1: React.FC<Type1Props> = ({ onNext }) => {
 
   const question = "What is the capital of France?";
   const correctAnswer = "Paris";
@@ -38,7 +42,7 @@ const type1 = () => {
 
         <ResultBox result={result} content={<ResultContent result={result} answer={correctAnswer} />} />
 
-        <CheckAnswerButton onPress={checkAnswer} result={result} />
+        <CheckAnswerButton onPress={checkAnswer} onNext={onNext} result={result} />
       </View>
     </TouchableWithoutFeedback>
   );

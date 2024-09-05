@@ -6,19 +6,20 @@ import BackButton from "@/components/BackButton";
 const VocabularyLesson = () => {
     const navigation = useNavigation();
 
-    useEffect(() => {
-        navigation.setOptions({
-            header: () => (
-                <View style={styles.header}>
-                    <BackButton/>
-                    <Text style={styles.title}>Vocabulary</Text>
-                </View>
-            ),
-            headerTitleStyle: {
-                color: 'white'
-            },
-        });
-    }, [navigation]);
+  useEffect(() => {
+    navigation.setOptions({
+      headerShown: true,
+      header: () => (
+        <View style={styles.header}>
+          <BackButton/>
+          <Text style={styles.title}>Vocabulary</Text>
+        </View>
+      ),
+      headerTitleStyle: {
+        color: 'white'
+      },
+    });
+  }, [navigation]);
 
     return (
         <View style={styles.container}>

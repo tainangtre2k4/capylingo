@@ -9,6 +9,7 @@ export const incorrectAnswerColor = '#EB5757'; // Màu đỏ
 export const sharedStyles = StyleSheet.create({
   container: {
     flex: 1,
+    width: width,
     padding: width * 0.05,
     alignItems: 'center',
   },
@@ -54,7 +55,7 @@ export const sharedStyles = StyleSheet.create({
 
   //multiple choice box answer
   MCBoxAnswer: {
-    width: '95%',
+    width: width*0.821,
     height: height*0.065,
     backgroundColor: '#3DB2FF',
     borderRadius: width*0.027,

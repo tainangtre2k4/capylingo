@@ -29,22 +29,29 @@ const generateColors = (numColors: number) => {
     return shuffleArray(colors);
   };
 
-const type5 = () => {
-  const question = 'Matching synonyms ';
-  const synonyms = [
-    ['Happy', 'Joyful'],
-    ['Sad', 'Unhappy'],
-    ['Fast', 'Quick'],
-    ['Hello', 'Hi'],
-    // ['Big', 'Large'],
-    // ['Smart', 'Intelligent'],
-    // ['Strong', 'Powerful'],
-    // ['Easy', 'Simple'],
-    // ['Begin', 'Start'],
-    // ['Rich', 'Wealthy'],
-    // ['Quiet', 'Silent'],
-    // ['Brave', 'Courageous'],
-   ];
+interface VocabType3Props {
+  question: string;
+  synonyms: string[][];
+  onNext: () => void;
+  onCorrectAnswer: () => void;
+  onIncorrectAnswer: () => void;
+}
+const VocabType3: React.FC<VocabType3Props> = ({ question, synonyms, onNext, onCorrectAnswer, onIncorrectAnswer })  => {
+  // const question = 'Matching synonyms ';
+  // const synonyms = [
+  //   ['Happy', 'Joyful'],
+  //   ['Sad', 'Unhappy'],
+  //   ['Fast', 'Quick'],
+  //   ['Hello', 'Hi'],
+  //   // ['Big', 'Large'],
+  //   // ['Smart', 'Intelligent'],
+  //   // ['Strong', 'Powerful'],
+  //   // ['Easy', 'Simple'],
+  //   // ['Begin', 'Start'],
+  //   // ['Rich', 'Wealthy'],
+  //   // ['Quiet', 'Silent'],
+  //   // ['Brave', 'Courageous'],
+  //  ];
 
   const [leftColumn, setLeftColumn] = useState<{ word: string, index: number }[]>([]);
   const [rightColumn, setRightColumn] = useState<{ word: string, index: number }[]>([]);
@@ -102,8 +109,10 @@ const type5 = () => {
 
     if (results.every(result => result === true)){
         setResult('correct');
+        onCorrectAnswer();
     } else {
          setResult('incorrect');
+         onIncorrectAnswer();
       }
   };
   
@@ -140,7 +149,11 @@ const type5 = () => {
       <TouchableOpacity
         style={[
           sharedStyles.MCBoxAnswerSmall,
-          { backgroundColor }
+          { backgroundColor,
+            borderColor: '#A0A0A0',
+            borderWidth: isSelected ? 3 : 0,
+            //borderRadius: 5, 
+          }
         ]}
         onPress={handlePress}
         disabled={!!results.length}
@@ -184,7 +197,7 @@ const type5 = () => {
         <ResultBox result={result} content={<ResultContent result={result} toggleModal={toggleModal}/>} />
 
         {(matchedPairs.length === synonyms.length && selectedLeft === null && selectedRight === null)
-        ? <CheckAnswerButton onPress={checkAnswer} result={result} />
+        ? <CheckAnswerButton onPress={checkAnswer} onNext={onNext} result={result} />
         : <TouchableOpacity
             style={[sharedStyles.checkAnswerButton, { backgroundColor: buttonColor }]}
             onPress={handleMatch}
@@ -205,15 +218,4 @@ const type5 = () => {
     </View>
   );
 };
-
-
-const styles = StyleSheet.create({
-    matched: {
-        backgroundColor: '#a0ffa0',
-      },
-      selected: {
-        backgroundColor: '#a0c0ff',
-      },
-
-  });
-export default type5;
+export default VocabType3;
