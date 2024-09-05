@@ -103,104 +103,116 @@ interface SquareProps {
     scrollX: Animated.Value;
 }
 
-const Square = ({scrollX}) => {
-  const YOLO = Animated.divide(
-    Animated.modulo(scrollX, width),      // Dam bao YOLO luon nam tu 0-1 sai khi divide
-    new Animated.Value(width)
-  )
-  const rotate = YOLO.interpolate({
-    inputRange: [0, 0.5, 1],
-    outputRange: ['35deg', '0deg', '35deg']
-  })
-  const translateX = YOLO.interpolate({
-    inputRange: [0, 0.5, 1],
-    outputRange: [0, -height, 0],
-  })
-  return (
-    <Animated.View
-      style = {{
-        width: height,
-        height: height,
-        backgroundColor: '#fff',
-        borderRadius: 90,
-        position: 'absolute',
-        top: -height * 0.7,
-        left: -height *0.32,
-        transform: [
-          {
-            rotate,
-          },
-          {
-            translateX,
-          }
-        ]
-      }}
-    />
-  )
-}
-
-export default function App() {
-  const scrollX=React.useRef(new Animated.Value(0)).current //useRef de giu gtri , ko can re-render
-  return (
-    <View style={styles.container}>
-      <Backdrop scrollX={scrollX} />
-
-      <Square scrollX={scrollX} />
-
-      <Animated.FlatList 
-        data={DATA}
-        keyExtractor={item => item.key}
-        horizontal
-        scrollEventThrottle={16}
-        onScroll={Animated.event(
-            [{nativeEvent: {contentOffset: {x: scrollX}}}], // gtri X trong content Offset se dc cap nhat vao scrollX
-            {useNativeDriver: false} //do NativeDriver ko support backgrounColor
-        )}
-        contentContainerStyle={{paddingBottom: 100}}
-        showsHorizontalScrollIndicator={false}
-        pagingEnabled
-        renderItem={({ item }) => {
-          return (
-          <View style={{width: width, alignItems: 'center'}}>
-            <View style={{flex: 0.6, justifyContent: 'center', padding: 20 }}>
-                <Image source={item.image}
-                style={{
-                    width: width / 2,
-                    height: height / 2,
-                    resizeMode: 'contain'
-                }}
-                />
-            </View>
-            
-            <View style={{flex: 0.2, alignItems: 'center'}}>
-              <Text style={{ color: '#fff', fontWeight: '800', fontSize: 30, marginBottom: 40, marginTop: 16}}>
-                  {item. title}
-              </Text>
-
-              <Text style={{ color: '#fff', fontWeight: '500', fontSize: 16, marginHorizontal: 30}}>
-                  {item.description}</Text>
-            </View>
-          </View>
-          )
-        }}
+const Square: React.FC<SquareProps> = ({ scrollX }) => {
+    const YOLO = Animated.divide(
+        Animated.modulo(scrollX, width),
+        new Animated.Value(width)
+    );
+    const rotate = YOLO.interpolate({
+        inputRange: [0, 0.5, 1],
+        outputRange: ['35deg', '0deg', '35deg']
+    });
+    const translateX = YOLO.interpolate({
+        inputRange: [0, 0.5, 1],
+        outputRange: [0, -height, 0],
+    });
+    return (
+        <Animated.View
+            style={{
+                width: height,
+                height: height,
+                backgroundColor: '#fff',
+                borderRadius: 86,
+                position: 'absolute',
+                top: -height * 0.68,
+                left: -height * 0.32,
+                transform: [{ rotate }, { translateX }]
+            }}
         />
-      <Indicator scrollX={scrollX}/>
-      <TouchableOpacity
-        style={{
-          height: 60,
-          width: 273,
-          position:'absolute',
-          bottom: 70,
-          backgroundColor: '#fff',
-          alignItems: 'center',
-          justifyContent: 'center',
-          borderRadius: 30,
-        }}>
-            <Text style={{fontWeight: '600', fontSize: 18, color: '#707070'}}>Yes, Captain Capybara !</Text>
-      </TouchableOpacity>
-    </View>
-  );
-}
+    );
+};
+
+const ResourcesStack: React.FC = () => {
+    const router = useRouter();
+    const [currentIndex, setCurrentIndex] = React.useState(0);
+    const scrollX = React.useRef(new Animated.Value(0)).current;
+
+    React.useEffect(() => {
+        const listener = scrollX.addListener(({ value }) => {
+            const index = Math.round(value / width);
+            setCurrentIndex(index);
+        });
+
+        return () => scrollX.removeListener(listener);
+    }, [scrollX]);
+
+    return (
+        <View style={styles.container}>
+            <Backdrop scrollX={scrollX} />
+            <Square scrollX={scrollX} />
+            <Animated.FlatList
+                data={DATA}
+                keyExtractor={(item) => item.key}
+                horizontal
+                scrollEventThrottle={16}
+                onScroll={Animated.event(
+                    [{ nativeEvent: { contentOffset: { x: scrollX } } }],
+                    { useNativeDriver: false }
+                )}
+                contentContainerStyle={{ paddingBottom: 100 }}
+                showsHorizontalScrollIndicator={false}
+                pagingEnabled
+                renderItem={({ item }) => (
+                    <View style={{ width: width, alignItems: 'center' }}>
+                        <View style={{ flex: 0.6, justifyContent: 'center', padding: 20 }}>
+                            <Image
+                                source={item.image}
+                                style={{
+                                    width: width / 2,
+                                    height: height / 2,
+                                    resizeMode: 'contain'
+                                }}
+                            />
+                        </View>
+                        <View style={{ flex: 0.2, alignItems: 'center' }}>
+                            <Text style={{
+                                color: '#fff',
+                                fontWeight: '800',
+                                fontSize: 30,
+                                marginBottom: 40,
+                                marginTop: 16
+                            }}>
+                                {item.title}
+                            </Text>
+                            <Text style={{ color: '#fff', fontWeight: '500', fontSize: 16, marginHorizontal: 30 }}>
+                                {item.description}
+                            </Text>
+                        </View>
+                    </View>
+                )}
+            />
+            <Indicator scrollX={scrollX} />
+            <TouchableOpacity
+                style={{
+                    height: 60,
+                    width: 273,
+                    position: 'absolute',
+                    bottom: 70,
+                    backgroundColor: '#fff',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    borderRadius: 30,
+                }}
+                onPress={() => {
+                    const currentItem = DATA[currentIndex];
+                    router.push(currentItem.navigate);
+                }}
+            >
+                <Text style={{ fontWeight: '600', fontSize: 18, color: '#707070' }}>Yes, Captain Capybara !</Text>
+            </TouchableOpacity>
+        </View>
+    );
+};
 
 const styles = StyleSheet.create({
     container: {
