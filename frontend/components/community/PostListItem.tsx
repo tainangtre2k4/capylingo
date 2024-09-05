@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { Ionicons, Feather, AntDesign } from '@expo/vector-icons';
 import { AdvancedImage } from 'cloudinary-react-native';
@@ -6,16 +6,17 @@ import { cld } from '@/lib/cloudinary';
 import { thumbnail } from "@cloudinary/url-gen/actions/resize";
 import { focusOn } from "@cloudinary/url-gen/qualifiers/gravity";
 import { FocusOn } from "@cloudinary/url-gen/qualifiers/focusOn";
-import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage
+import AsyncStorage from '@react-native-async-storage/async-storage'; 
 import { supabase } from '@/lib/supabase';
 import { useUser } from '@clerk/clerk-expo';
 import PostContent from './PostContent';
+import { useFocusEffect } from '@react-navigation/native';
 
-export default function PostListItem({ post, commentHandler, show = true }) {
+export default function PostListItem({ post, commentHandler, show = true,onRemove=()=>{},savePost=false }) {
   const { user } = useUser();
   const [isLiked, setIsLiked] = useState(false);
   const [likeRecord, setLikeRecord] = useState(null);
-  const [isSaved, setIsSaved] = useState(false); // State for bookmark
+  const [isSaved, setIsSaved] = useState(false);
 
   useEffect(() => {
     if (post.my_likes.length > 0) {
@@ -30,9 +31,11 @@ export default function PostListItem({ post, commentHandler, show = true }) {
     } else deleteLike();
   }, [isLiked]);
 
-  useEffect(() => {
-    checkIfSaved();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      checkIfSaved();
+    }, [])
+  );
 
   const checkIfSaved = async () => {
     try {
@@ -73,7 +76,6 @@ export default function PostListItem({ post, commentHandler, show = true }) {
     ]).select('*');
     if (error) console.log(error);
     if (data) {
-      console.log(data[0]);
       setLikeRecord(data[0]);
     }
   };
@@ -116,14 +118,27 @@ export default function PostListItem({ post, commentHandler, show = true }) {
           />
           <Ionicons onPress={() => commentHandler(post)} name="chatbubble-outline" size={20} />
           <Feather name="send" size={20} />
-          <TouchableOpacity onPress={toggleSave}>
+          <TouchableOpacity onPress={() => {
+            if (!isSaved) {
+              toggleSave();
+            } else if (savePost) {
+              onRemove();
+            } else {
+              toggleSave();
+            }
+          }}>
             <Feather
               name="bookmark"
               size={20}
-              color={isSaved ? 'crimson' : 'black'} // Change color based on saved status
+              color={isSaved ? 'crimson' : 'black'}
               className="ml-auto"
             />
           </TouchableOpacity>
+          {/* {isSaved && (
+            <TouchableOpacity onPress={onRemove}>
+              <Feather name="trash-2" size={20} color="red" />
+            </TouchableOpacity>
+          )} */}
         </View>
       )}
 

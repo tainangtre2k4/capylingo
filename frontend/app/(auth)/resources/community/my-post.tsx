@@ -35,7 +35,7 @@ const MyPostsScreen: React.FC = () => {
   };
 
   const commentHandler = (post) => {
-    router.push(`/comment?postId=${post.id}`);
+    router.push(`/resources/community/comment?postId=${post.id}`);
   };
 
   return (

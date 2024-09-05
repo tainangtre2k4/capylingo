@@ -32,7 +32,7 @@ const FeedScreen = () => {
   };
 
   const commentHandler = (post) => {
-    router.push(`/comment?postId=${post.id}`);
+    router.push(`/resources/community/comment?postId=${post.id}`);
   };
 
   return (
@@ -47,11 +47,11 @@ const FeedScreen = () => {
 
       {/* Navigation to Saved Posts */}
       <View style={styles.savedPostsContainer}>
-        <TouchableOpacity style={styles.savedPostsButton} onPress={() => router.push('/saved-post')}>
+        <TouchableOpacity style={styles.savedPostsButton} onPress={() => router.push('/resources/community/saved-post')}>
           <Ionicons name="bookmark-outline" size={24} color="white" />
           <Text style={styles.savedPostsText}>Saved Posts</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.savedPostsButton} onPress={() => router.push('/my-post')}>
+        <TouchableOpacity style={styles.savedPostsButton} onPress={() => router.push('/resources/community/my-post')}>
           <Ionicons name="document-outline" size={24} color="white" />
           <Text style={styles.savedPostsText}>My Posts</Text>
         </TouchableOpacity>

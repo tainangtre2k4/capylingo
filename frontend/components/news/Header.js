@@ -1,13 +1,13 @@
 import { Text, TouchableOpacity, View, StyleSheet, Image, Dimensions } from "react-native";
 import React from "react";
-import { MagnifyingGlassIcon,PlusIcon} from "react-native-heroicons/outline";
+import { MagnifyingGlassIcon, PlusIcon } from "react-native-heroicons/outline";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
 
 // Get screen dimensions
 const { width } = Dimensions.get('window');
 
-export default function Header({ backHandler,title,search=true,create=false,navigateHandler=()=>{} }) {
+export default function Header({ backHandler, title, search = true, create = false, navigateHandler = () => {} }) {
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
@@ -25,17 +25,17 @@ export default function Header({ backHandler,title,search=true,create=false,navi
         {search && (
           <TouchableOpacity
             onPress={() => router.push("/search")}
-            style={styles.searchButton}
+            style={styles.iconButton}
           >
-            <MagnifyingGlassIcon size={25} strokeWidth={2} color="black" />
+            <MagnifyingGlassIcon size={20} strokeWidth={2} color="black" />
           </TouchableOpacity>
         )}
 
         {create && (
           <TouchableOpacity
-          onPress={navigateHandler}
-          style={styles.searchButton}>
-          <PlusIcon size={25} strokeWidth={2} color="black" />
+            onPress={navigateHandler}
+            style={styles.iconButton}>
+            <PlusIcon size={20} strokeWidth={2} color="black" />
           </TouchableOpacity>
         )}
       </View>
@@ -45,40 +45,44 @@ export default function Header({ backHandler,title,search=true,create=false,navi
 
 const styles = StyleSheet.create({
   safeArea: {
-    backgroundColor: '#3DB2FF', 
+    backgroundColor: '#3DB2FF',
   },
   container: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: width * 0.05, 
+    paddingHorizontal: width * 0.03, // Reduced padding
     backgroundColor: '#3DB2FF',
+    height: 28,
   },
   backButton: {
-    height: width * 0.1, // 10% of screen width for circular button size
-    width: width * 0.1,
+    height: width * 0.08, // Reduced size
+    width: width * 0.08, // Reduced size
     backgroundColor: 'white',
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 12,
+    borderRadius: 10, // Slightly smaller radius
+    position: 'absolute',
+    left: width * 0.03, // Align with the reduced padding
   },
   backButtonImage: {
-    height: width * 0.05, // Adjusted based on screen width
-    width: width * 0.03,
+    height: width * 0.04, // Reduced size
+    width: width * 0.025, // Reduced size
   },
   title: {
-    fontSize: width * 0.085, // 5% of screen width for font size
+    fontSize: width * 0.06, // Reduced font size
     fontWeight: 'bold',
-    color: 'white', // White text color for the title
+    color: 'white',
     textAlign: 'center',
-    flex: 1, // Center title with flex
   },
-  searchButton: {
-    height: width * 0.1, // 10% of screen width for circular button size
-    width: width * 0.1,
+  iconButton: {
+    height: width * 0.08, // Reduced size
+    width: width * 0.08, // Reduced size
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: (width * 0.1) / 2, // Half of height/width to make the button circular
-    backgroundColor: 'white', // White background for the search button
+    borderRadius: (width * 0.08) / 2, // Adjusted for new size
+    backgroundColor: 'white',
+    position: 'absolute',
+    right: width * 0.03, // Align with the reduced padding
   },
 });
