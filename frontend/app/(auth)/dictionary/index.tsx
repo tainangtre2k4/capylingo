@@ -206,7 +206,7 @@ export default Dictionary;
 
 const styles = StyleSheet.create({
     headerContainer: {
-        paddingVertical: 10,
+        paddingVertical: 12,
         paddingHorizontal: 20,
         marginTop: Platform.OS === 'android' ? (RNStatusBar.currentHeight || 20) : 0,
         backgroundColor: '#3DB2FF',
