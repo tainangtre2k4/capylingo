@@ -105,7 +105,7 @@ const TabsPage = () => {
           redirect={!isSignedIn}
         /> */}
         <Tabs.Screen
-          name="(community)"
+          name="chatbot"
           options={{
             headerShown: false,
             tabBarLabel: 'Commuity',

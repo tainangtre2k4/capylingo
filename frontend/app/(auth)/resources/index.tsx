@@ -20,7 +20,7 @@ const DATA: DataItem[] = [
         title: "Daily English News",
         description: "Catch up on the latest news and enhance your English skills with our daily reading feature. Improve your vocabulary and comprehension with every article.",
         image: require('@/assets/images/resources/capyNews.png'),
-        navigate: ''
+        navigate: 'resources/community'
     },
     {
         key: "2",
@@ -34,14 +34,14 @@ const DATA: DataItem[] = [
         title: "AI Chatbot",
         description: "Chat with our quirky digital buddy, Cabybot! He will be a great company for your journey. Our beloved Cabybot sometimes turns into Dumdumbara though...",
         image: require('@/assets/images/resources/capyAI.png'),
-        navigate: ''
+        navigate: 'resources/community'
     },
     {
         key: "4",
         title: "Play Games",
         description: "Play exciting games that make learning English fun. Improve your language skills through entertaining and interactive challenges.",
         image: require('@/assets/images/resources/capyGames.png'),
-        navigate: ''
+        navigate: 'resources/community'
     },
 ];
 

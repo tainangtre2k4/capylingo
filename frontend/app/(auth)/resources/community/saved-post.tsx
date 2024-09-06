@@ -6,6 +6,23 @@ import PostListItem from '@/components/community/PostListItem';
 import Header from '@/components/news/Header';
 import { useFocusEffect } from '@react-navigation/native';
 
+type User = {
+  id: string;
+  username: string;
+  avatar_url: string;
+};
+
+type Post = {
+  id: number; // Ensure `id` is a number
+  media_type: 'image' | 'video';
+  image: string;
+  caption: string;
+  user: User,
+  my_likes: { id: string }[];
+  likesPost?: { count: number }[];
+};
+
+
 const SavedPostsScreen: React.FC = () => {
   const [savedPosts, setSavedPosts] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
@@ -59,7 +76,7 @@ const SavedPostsScreen: React.FC = () => {
     }
   };
 
-  const commentHandler = (post) => {
+  const commentHandler = (post: Post) => {
     router.push(`/comment?postId=${post.id}`);
   };
 

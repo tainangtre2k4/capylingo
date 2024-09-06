@@ -10,6 +10,11 @@ type SearchParams = {
   postId: string;
 };
 
+type User = {
+  id: string;
+  username: string;
+  avatar_url: string;
+};
 type Comment = {
   id: number;
   content: string;
@@ -20,17 +25,15 @@ type Comment = {
 };
 
 type Post = {
-  id: number;
-  content: string;
-  user: {
-    id: string;
-    username: string;
-    avatar_url: string;
-  };
-  my_likes: { user_id: string }[];
-  likesPost: { count: number }[];
+  id: number; // Ensure `id` is a number
+  media_type: 'image' | 'video';
+  image: string;
   caption: string;
+  user: User,
+  my_likes: { id: string }[];
+  likesPost?: { count: number }[];
 };
+
 
 const CommentScreen: React.FC = () => {
   const { user } = useUser(); // Get authenticated user from Clerk

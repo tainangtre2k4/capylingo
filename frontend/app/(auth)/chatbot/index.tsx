@@ -73,7 +73,7 @@ export default function HomeScreen() {
         <TouchableOpacity
           className="mt-10 py-4 w-3/5 rounded-full items-center"
           style={{ backgroundColor: selectedChatFace.primary }}
-          onPress={() => router.push('/chatbot/chatScreen')}
+          onPress={() => {}}
         >
           <Text className="text-base text-white">Let's Chat</Text>
         </TouchableOpacity>

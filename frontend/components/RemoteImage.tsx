@@ -4,7 +4,7 @@ import { supabase } from '../lib/supabase';
 
 type RemoteImageProps = {
   path?: string | null;
-  fallback: string | null;
+  fallback: string;
   NameOfStorage: string;
 } & Omit<ComponentProps<typeof Image>, 'source'>;
 
@@ -43,12 +43,14 @@ const RemoteImage = ({ path, fallback, NameOfStorage, ...imageProps }: RemoteIma
     fetchImage();
   }, [path]);
 
+  const imageUri = image || fallback;
+
   return (
     <View style={{ justifyContent: 'center', alignItems: 'center' }}>
       {loading ? (
-        <ActivityIndicator size="large"  />
+        <ActivityIndicator size="large" />
       ) : (
-        <Image source={{ uri: image || fallback }} {...imageProps} />
+        <Image source={{ uri: imageUri }} {...imageProps} />
       )}
     </View>
   );

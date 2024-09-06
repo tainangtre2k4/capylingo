@@ -22,7 +22,8 @@
       },
       "permissions": [
         "android.permission.RECORD_AUDIO"
-      ]
+      ],
+      "package": "com.migenmlo.capylingo"
     },
     "web": {
       "favicon": "./assets/images/favicon.png"

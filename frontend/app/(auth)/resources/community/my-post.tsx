@@ -6,6 +6,23 @@ import PostListItem from '@/components/community/PostListItem';
 import Header from '@/components/news/Header';
 import { router } from 'expo-router';
 
+type User = {
+  id: string;
+  username: string;
+  avatar_url: string;
+};
+
+type Post = {
+  id: number; // Ensure `id` is a number
+  media_type: 'image' | 'video';
+  image: string;
+  caption: string;
+  user: User,
+  my_likes: { id: string }[];
+  likesPost?: { count: number }[];
+};
+
+
 const MyPostsScreen: React.FC = () => {
   const { user } = useUser(); // Get authenticated user from Clerk
   const [myPosts, setMyPosts] = useState<any[]>([]);
@@ -34,7 +51,7 @@ const MyPostsScreen: React.FC = () => {
     setLoading(false);
   };
 
-  const commentHandler = (post) => {
+  const commentHandler = (post: Post) => {
     router.push(`/resources/community/comment?postId=${post.id}`);
   };
 

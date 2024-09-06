@@ -89,7 +89,14 @@ export default function ChatScreen() {
           await new Promise(res => setTimeout(res, 1000)); // Wait before retrying
         } else {
           console.error('Failed to fetch response:', error);
-          const errorMessage = error.response?.data?.message || 'An error occurred. Please try again later.';
+  
+          let errorMessage = 'An error occurred. Please try again later.';
+          if (error instanceof Error) {
+            // Check if it's an Axios error (or any error with `response`)
+            const axiosError = (error as any)?.response?.data?.message;
+            errorMessage = axiosError || error.message;
+          }
+  
           const errorResponse: ChatMessage[] = [
             {
               _id: Math.random() * (9999999 - 1),
@@ -108,6 +115,7 @@ export default function ChatScreen() {
     }
     setLoading(false);
   };
+  
   
 
   const renderBubble = (props: BubbleProps<ChatMessage>) => (

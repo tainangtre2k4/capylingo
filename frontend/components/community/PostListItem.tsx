@@ -6,16 +6,42 @@ import { cld } from '@/lib/cloudinary';
 import { thumbnail } from "@cloudinary/url-gen/actions/resize";
 import { focusOn } from "@cloudinary/url-gen/qualifiers/gravity";
 import { FocusOn } from "@cloudinary/url-gen/qualifiers/focusOn";
-import AsyncStorage from '@react-native-async-storage/async-storage'; 
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { supabase } from '@/lib/supabase';
 import { useUser } from '@clerk/clerk-expo';
 import PostContent from './PostContent';
 import { useFocusEffect } from '@react-navigation/native';
 
-export default function PostListItem({ post, commentHandler, show = true,onRemove=()=>{},savePost=false }) {
+// Define types for Post, User, and the handler functions
+type User = {
+  id: string;
+  username: string;
+  avatar_url: string;
+};
+
+type Post = {
+  id: number; // Ensure `id` is a number
+  media_type: 'image' | 'video';
+  image: string;
+  caption: string;
+  user: User,
+  my_likes: { id: string }[];
+  likesPost?: { count: number }[];
+};
+
+
+type PostListItemProps = {
+  post: Post;
+  commentHandler: (post: Post) => void;
+  show?: boolean;
+  onRemove?: () => void;
+  savePost?: boolean;
+};
+
+export default function PostListItem({ post, commentHandler, show = true, onRemove = () => {}, savePost = false }: PostListItemProps) {
   const { user } = useUser();
   const [isLiked, setIsLiked] = useState(false);
-  const [likeRecord, setLikeRecord] = useState(null);
+  const [likeRecord, setLikeRecord] = useState<{ id: string } | null>(null);
   const [isSaved, setIsSaved] = useState(false);
 
   useEffect(() => {
@@ -28,7 +54,9 @@ export default function PostListItem({ post, commentHandler, show = true,onRemov
   useEffect(() => {
     if (isLiked) {
       saveLike();
-    } else deleteLike();
+    } else {
+      deleteLike();
+    }
   }, [isLiked]);
 
   useFocusEffect(
@@ -40,8 +68,8 @@ export default function PostListItem({ post, commentHandler, show = true,onRemov
   const checkIfSaved = async () => {
     try {
       const savedPosts = await AsyncStorage.getItem('savedPosts');
-      const savedPostsArray = savedPosts ? JSON.parse(savedPosts) : [];
-      const isPostSaved = savedPostsArray.some(savedPost => savedPost.id === post.id);
+      const savedPostsArray: Post[] = savedPosts ? JSON.parse(savedPosts) : [];
+      const isPostSaved = savedPostsArray.some((savedPost) => savedPost.id === post.id);
       setIsSaved(isPostSaved);
     } catch (error) {
       console.error('Error checking if post is saved:', error);
@@ -51,10 +79,10 @@ export default function PostListItem({ post, commentHandler, show = true,onRemov
   const toggleSave = async () => {
     try {
       const savedPosts = await AsyncStorage.getItem('savedPosts');
-      let savedPostsArray = savedPosts ? JSON.parse(savedPosts) : [];
+      let savedPostsArray: Post[] = savedPosts ? JSON.parse(savedPosts) : [];
 
       if (isSaved) {
-        savedPostsArray = savedPostsArray.filter(savedPost => savedPost.id !== post.id);
+        savedPostsArray = savedPostsArray.filter((savedPost) => savedPost.id !== post.id);
       } else {
         savedPostsArray.push(post);
       }
@@ -102,7 +130,7 @@ export default function PostListItem({ post, commentHandler, show = true,onRemov
           cldImg={avatar}
           className='w-12 aspect-square rounded-full'
         />
-        <Text className='font-semibold '>{post.user.username || 'New User'}</Text>
+        <Text className='font-semibold'>{post.user.username || 'New User'}</Text>
       </View>
 
       <PostContent post={post} />
@@ -112,7 +140,7 @@ export default function PostListItem({ post, commentHandler, show = true,onRemov
         <View className="flex-row gap-3 p-3">
           <AntDesign
             onPress={() => setIsLiked(!isLiked)}
-            name={isLiked ? "heart" : "hearto"}
+            name={isLiked ? 'heart' : 'hearto'}
             size={20}
             color={isLiked ? 'crimson' : 'black'}
           />
@@ -134,11 +162,6 @@ export default function PostListItem({ post, commentHandler, show = true,onRemov
               className="ml-auto"
             />
           </TouchableOpacity>
-          {/* {isSaved && (
-            <TouchableOpacity onPress={onRemove}>
-              <Feather name="trash-2" size={20} color="red" />
-            </TouchableOpacity>
-          )} */}
         </View>
       )}
 

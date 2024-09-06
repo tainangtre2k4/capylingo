@@ -7,9 +7,26 @@ import { supabase } from '@/lib/supabase';
 import { useUser } from '@clerk/clerk-expo';
 import { Ionicons } from '@expo/vector-icons'; // Import icon for Saved posts
 
+type User = {
+  id: string;
+  username: string;
+  avatar_url: string;
+};
+
+type Post = {
+  id: number; // Ensure `id` is a number
+  media_type: 'image' | 'video';
+  image: string;
+  caption: string;
+  user: User,
+  my_likes: { id: string }[];
+  likesPost?: { count: number }[];
+};
+
+
 const FeedScreen = () => {
   const { user } = useUser(); // Get authenticated user from Clerk
-  const [posts, setPosts] = useState([]);
+  const [posts, setPosts] = useState<Post[]>([]); // Define the type of posts as Post[]
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
@@ -23,15 +40,27 @@ const FeedScreen = () => {
       .from('posts')
       .select('*,user:users(*),my_likes:likesPost(*),likesPost(count)')
       .eq('my_likes.user_id', user?.id);
+  
     if (error) {
-      Alert.alert("Something went Wrong !");
+      Alert.alert("Something went wrong!");
+      setLoading(false);
+      return;
     }
-    const sortedPosts = data.sort((a, b) => b.id - a.id);
-    setPosts(sortedPosts);
+  
+    if (!data) {
+      Alert.alert("No posts found");
+      setLoading(false);
+      return;
+    }
+  
+    // Sort posts by id (numerically)
+    const sortedPosts = data.sort((a: Post, b: Post) => b.id - a.id);
+    setPosts(sortedPosts); // Set sortedPosts to posts
     setLoading(false);
   };
+  
 
-  const commentHandler = (post) => {
+  const commentHandler = (post: Post) => {
     router.push(`/resources/community/comment?postId=${post.id}`);
   };
 
@@ -39,8 +68,8 @@ const FeedScreen = () => {
     <View style={{ flex: 1 }}>
       <Header
         title='Community'
-        backHandler={() => {}}
-        navigateHandler={() => { router.push('/create') }}
+        backHandler={() => {router.navigate('/resources')}}
+        navigateHandler={() => { router.push('/comunity/create') }}
         search={false}
         create={true}
       />
@@ -80,7 +109,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginVertical: 5,
     justifyContent: 'space-around',
-    backgroundColor:'white',
+    backgroundColor: 'white',
   },
   savedPostsButton: {
     flexDirection: 'row',
@@ -89,7 +118,7 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 16,
     width: 150,
-    justifyContent:'center'
+    justifyContent: 'center',
   },
   savedPostsText: {
     color: 'white',
